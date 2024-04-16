@@ -1,0 +1,20 @@
+package com.rymcu.tenon.mapper;
+
+import com.rymcu.tenon.core.mapper.Mapper;
+import com.rymcu.tenon.entity.Role;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * Created on 2024/4/13 22:06.
+ *
+ * @author ronger
+ * @email ronger-x@outlook.com
+ * @desc : com.rymcu.tenon.mapper
+ */
+public interface RoleMapper extends Mapper<Role> {
+    List<Role> selectRolesByIdUser(@Param("idUser") Long idUser);
+
+    Role selectRoleByPermission(@Param("permission") String permission);
+}

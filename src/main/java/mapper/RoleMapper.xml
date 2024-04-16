@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.tenon.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.tenon.entity.Role">
+        <id column="id" jdbcType="INTEGER" property="idRole"/>
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="permission" jdbcType="VARCHAR" property="permission"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+    </resultMap>
+    <select id="selectRolesByIdUser" resultMap="BaseResultMap">
+        select tr.id, tr.label, tr.permission
+        from tenon_user_role tur
+                 left join tenon_role tr on tur.id_tenon_role = tr.id
+        where tur.id_tenon_user = #{idUser}
+    </select>
+    <select id="selectRoleByPermission" resultMap="BaseResultMap">
+        select id, label, permission from tenon_role where permission = #{permission}
+    </select>
+</mapper>

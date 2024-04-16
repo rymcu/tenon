@@ -1,0 +1,64 @@
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: LEGACYHTML5
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    cache: false
+  data:
+    redis:
+      host: 192.168.31.200
+      port: 6379
+      password: ENC(yfBhgupvMmGRK+O3nM2XuXjqA94yyL6SZDOOyHaztzM=)
+      database: 1
+      timeout: 3000
+      jedis:
+        pool:
+          max-active: 8
+          max-wait: 1
+          max-idle: 500
+          min-idle: 0
+  datasource:
+    url: jdbc:mysql://192.168.31.200:3306/tenon?characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    username: root
+    password: ENC(TfNCyv8RBaH0LMYWA+dV5iZ4FHURu0e0ocaq4d0vkbcRgm63hpjfd9FNxwaU3z5XRf7xvIflfoQ=)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      pool-name: tenonPool
+      connection-test-query: SELECT 1
+  mail:
+    host: smtp.ym.163.com
+    port: 465
+    username: service@rymcu.com
+    password: ENC(wYjMDevKQeoMzDmkks4Spe4tvNB1f5iSv6qEaA6VFys=)
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+logging:
+  file:
+    path: /logs/tenon
+  level:
+    com:
+      rymcu: info
+server:
+  port: 8080
+  servlet:
+    context-path: /tenon
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+    min-response-size: 10240
+  max-http-request-header-size: 10240
+version: 1.0
+openai:
+  api-key: # OpenAI api key
+  base-url: https://api.openai.com/
