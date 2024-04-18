@@ -50,6 +50,7 @@ public class Utils {
 
     /**
      * 生成安全的密码，生成随机的16位salt并经过1024次 sha-1 hash
+     *
      * @param plainPassword 密码
      * @return String 加密后的密码
      */
@@ -63,7 +64,7 @@ public class Utils {
     /**
      * 一般检查工具密码比对
      *
-     * @param password 密码
+     * @param password        密码
      * @param encryptPassword 加密的密码
      * @return Boolean 匹配状态
      */
@@ -97,5 +98,9 @@ public class Utils {
 
     public static void main(String[] args) {
 
+    }
+
+    public static Integer genCode() {
+        return (int) ((Math.random() * 9 + 1) * 100000);
     }
 }

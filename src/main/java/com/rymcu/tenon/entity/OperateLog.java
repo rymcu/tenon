@@ -2,6 +2,8 @@ package com.rymcu.tenon.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
+import tk.mybatis.mapper.annotation.KeySql;
+import tk.mybatis.mapper.code.ORDER;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -24,7 +26,7 @@ public class OperateLog {
      * 日志主键
      */
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
     private Long idOperateLog;
     /**

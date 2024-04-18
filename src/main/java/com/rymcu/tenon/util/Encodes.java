@@ -1,5 +1,5 @@
 /**
- * Copyright &copy; 2012-2016 <a href="http://www.zkjkgc.com">zkjkgc</a> All rights reserved.
+ * Copyright &copy; 2012-2016 <a href="http://www.rymcu.com">rymcu</a> All rights reserved.
  */
 package com.rymcu.tenon.util;
 

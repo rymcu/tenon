@@ -1,6 +1,6 @@
 package com.rymcu.tenon.auth;
 
-import com.rymcu.tenon.dto.TokenUser;
+import com.rymcu.tenon.model.TokenUser;
 import com.rymcu.tenon.entity.Role;
 import com.rymcu.tenon.service.RoleService;
 import com.rymcu.tenon.util.UserUtils;

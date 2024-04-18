@@ -1,9 +1,12 @@
 package com.rymcu.tenon.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 import tk.mybatis.mapper.annotation.ColumnType;
+import tk.mybatis.mapper.annotation.KeySql;
+import tk.mybatis.mapper.code.ORDER;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -29,39 +32,32 @@ public class User implements Serializable {
     /**
      * 登录账号
      */
-    @Column(name = "account")
     private String account;
 
     /**
      * 密码
      */
-    @Column(name = "password")
     @JSONField(serialize = false)
     private String password;
 
     /**
      * 昵称
      */
-    @Column(name = "nickname")
     private String nickname;
 
     /**
      * 真实姓名
      */
-    @Column(name = "real_name")
     private String realName;
 
     /**
      * 头像路径
      */
-    @Column(name = "avatar")
     private String avatar;
 
     /**
      * 邮箱地址
      */
-    @ColumnType(column = "email",
-            jdbcType = JdbcType.VARCHAR)
     private String email;
 
     /**
@@ -83,7 +79,6 @@ public class User implements Serializable {
     /**
      * 创建时间
      */
-    @Column(name = "created_time")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 

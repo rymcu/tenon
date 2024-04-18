@@ -4,7 +4,7 @@ import com.rymcu.tenon.auth.JwtConstants;
 import com.rymcu.tenon.auth.JwtUtils;
 import com.rymcu.tenon.auth.TokenManager;
 import com.rymcu.tenon.auth.TokenModel;
-import com.rymcu.tenon.dto.TokenUser;
+import com.rymcu.tenon.model.TokenUser;
 import com.rymcu.tenon.entity.User;
 import com.rymcu.tenon.mapper.UserMapper;
 import io.jsonwebtoken.Claims;

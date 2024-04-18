@@ -10,7 +10,7 @@ public final class ProjectConstant {
     /**项目基础包名称，根据自己公司的项目修改*/
     public static final String BASE_PACKAGE = "com.rymcu.tenon";
     /**DTO所在包*/
-    public static final String DTO_PACKAGE = BASE_PACKAGE + ".dto";
+    public static final String DTO_PACKAGE = BASE_PACKAGE + ".model";
     /**Model所在包*/
     public static final String MODEL_PACKAGE = BASE_PACKAGE + ".entity";
     /**Mapper所在包*/

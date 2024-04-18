@@ -3,7 +3,7 @@ package com.rymcu.tenon.core.service.security;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rymcu.tenon.auth.JwtConstants;
-import com.rymcu.tenon.dto.TokenUser;
+import com.rymcu.tenon.model.TokenUser;
 import com.rymcu.tenon.util.UserUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthenticatedException;

@@ -6,7 +6,10 @@ import com.rymcu.tenon.auth.TokenManager;
 import com.rymcu.tenon.core.exception.AccountExistsException;
 import com.rymcu.tenon.core.exception.CaptchaException;
 import com.rymcu.tenon.core.service.AbstractService;
-import com.rymcu.tenon.dto.TokenUser;
+import com.rymcu.tenon.entity.Menu;
+import com.rymcu.tenon.handler.event.RegisterEvent;
+import com.rymcu.tenon.mapper.MenuMapper;
+import com.rymcu.tenon.model.TokenUser;
 import com.rymcu.tenon.entity.Role;
 import com.rymcu.tenon.entity.User;
 import com.rymcu.tenon.mapper.RoleMapper;
@@ -14,16 +17,18 @@ import com.rymcu.tenon.mapper.UserMapper;
 import com.rymcu.tenon.service.UserService;
 import com.rymcu.tenon.util.Utils;
 import jakarta.annotation.Resource;
+import jakarta.validation.constraints.NotBlank;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,8 +47,12 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     private TokenManager tokenManager;
     @Resource
     private RoleMapper roleMapper;
+    @Resource
+    private MenuMapper menuMapper;
     @Autowired
     private StringRedisTemplate redisTemplate;
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private final static String DEFAULT_AVATAR = "https://static.rymcu.com/article/1578475481946.png";
     private final static String DEFAULT_ACCOUNT = "1411780000";
@@ -70,12 +79,10 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                     user.setAccount(nextAccount());
                     user.setEmail(email);
                     user.setPassword(Utils.encryptPassword(password));
-                    user.setCreatedTime(new Date());
                     user.setAvatar(DEFAULT_AVATAR);
                     userMapper.insertSelective(user);
-                    user = userMapper.selectByAccount(email);
-                    Role role = roleMapper.selectRoleByPermission("user");
-                    userMapper.insertUserRole(user.getIdUser(), role.getIdRole());
+                    // 注册成功后执行相关初始化事件
+                    applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getAccount()));
                     redisTemplate.delete(email);
                     return true;
                 }
@@ -120,7 +127,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public TokenUser login(String account, String password) {
+    public TokenUser login(@NotBlank String account, @NotBlank String password) {
         User user = userMapper.selectByAccount(account);
         if (Objects.nonNull(user)) {
             if (Utils.comparePassword(password, user.getPassword())) {
@@ -135,6 +142,41 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 return tokenUser;
             }
         }
-        throw new AuthorizationException();
+        throw new UnknownAccountException();
+    }
+
+    @Override
+    public TokenUser refreshToken(String refreshToken) {
+        return null;
+    }
+
+    @Override
+    public Set<String> findUserPermissionsByIdUser(Long idUser) {
+        Set<String> permissions = new HashSet<>();
+        List<Menu> menus = menuMapper.selectMenuListByIdUser(idUser);
+        for (Menu menu : menus) {
+            if (StringUtils.isNotBlank(menu.getPermission())) {
+                permissions.add(menu.getPermission());
+            }
+        }
+        permissions.add("user");
+        return permissions;
+    }
+
+    @Override
+    public Set<String> findUserRoleListByIdUser(Long idUser) {
+        List<Role> roles = roleMapper.selectRolesByIdUser(idUser);
+        Set<String> permissions = new HashSet<>();
+        for (Role role : roles) {
+            if (StringUtils.isNotBlank(role.getPermission())) {
+                permissions.add(role.getPermission());
+            }
+        }
+        return permissions;
+    }
+
+    @Override
+    public User findByAccount(String account) {
+        return userMapper.selectByAccount(account);
     }
 }

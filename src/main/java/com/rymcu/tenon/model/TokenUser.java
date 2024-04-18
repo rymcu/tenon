@@ -1,8 +1,9 @@
-package com.rymcu.tenon.dto;
+package com.rymcu.tenon.model;
 
 
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,16 +16,8 @@ public class TokenUser {
 
     private String account;
 
-    private String nickname;
-
     private String token;
 
-    private String avatarUrl;
-
     private String refreshToken;
-
-    private Set<String> scope;
-
-    private String bankAccount;
 
 }

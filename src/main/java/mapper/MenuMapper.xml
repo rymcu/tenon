@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.tenon.mapper.MenuMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.tenon.entity.Menu">
+        <id column="id" jdbcType="NUMERIC" property="idMenu"/>
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="permission" jdbcType="VARCHAR" property="permission"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+        <result column="status" jdbcType="NUMERIC" property="status"/>
+        <result property="parentId" column="PARENT_ID" jdbcType="NUMERIC"/>
+        <result property="sort" column="SORT" jdbcType="NUMERIC"/>
+        <result property="menuType" column="MENU_TYPE" jdbcType="NUMERIC"/>
+        <result property="icon" column="ICON" jdbcType="VARCHAR"/>
+        <result property="href" column="HREF" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="selectMenuListByIdRole" resultMap="BaseResultMap">
+        select id, label, permission
+        from tenon_menu tm
+        where status = 1
+          and exists(select 1
+                     from tenon_role_menu trm
+                     where trm.id_tenon_menu = tm.id
+                       and trm.id_tenon_role = #{idRole})
+    </select>
+    <select id="selectMenuListByIdUser" resultMap="BaseResultMap">
+        select id, label, permission
+        from tenon_menu tm
+        where status = 1
+          and exists(select 1
+                     from tenon_role_menu trm
+                     where trm.id_tenon_menu = tm.id
+                       and exists(select 1
+                                  from tenon_user_role tur
+                                  where tur.id_tenon_role = trm.id_tenon_role
+                                    and tur.id_tenon_user = #{idUser}))
+    </select>
+    <select id="selectMenuListByIdUserAndParentId" resultMap="BaseResultMap">
+        select id, label, permission
+        from tenon_menu tm
+        where status = 1 and parent_id = #{parentId}
+          and exists(select 1
+                     from tenon_role_menu trm
+                     where trm.id_tenon_menu = tm.id
+                       and exists(select 1
+                                  from tenon_user_role tur
+                                  where tur.id_tenon_role = trm.id_tenon_role
+                                    and tur.id_tenon_user = #{idUser}))
+    </select>
+</mapper>

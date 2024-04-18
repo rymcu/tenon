@@ -26,4 +26,9 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
     public List<Role> findRolesByIdUser(Long idUser) {
         return roleMapper.selectRolesByIdUser(idUser);
     }
+
+    @Override
+    public Boolean postRole(Role role) {
+        return roleMapper.insertSelective(role) > 0;
+    }
 }

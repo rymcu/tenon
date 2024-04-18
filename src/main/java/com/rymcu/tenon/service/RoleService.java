@@ -14,4 +14,6 @@ import java.util.List;
  */
 public interface RoleService extends Service<Role> {
     List<Role> findRolesByIdUser(Long idUser);
+
+    Boolean postRole(Role role);
 }

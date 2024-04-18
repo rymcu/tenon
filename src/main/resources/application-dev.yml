@@ -62,3 +62,5 @@ version: 1.0
 openai:
   api-key: # OpenAI api key
   base-url: https://api.openai.com/
+resource:
+  domain: https://atduck.com
