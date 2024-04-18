@@ -34,7 +34,7 @@
                email
         from tenon_user
         where (account = #{account} or email = #{account})
-          and status = 0
+          and status = 1
     </select>
     <select id="selectCountByNickname" resultType="java.lang.Integer">
         select count(0) from tenon_user where nickname = #{nickname}

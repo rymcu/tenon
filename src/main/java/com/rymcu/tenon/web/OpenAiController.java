@@ -1,6 +1,6 @@
 package com.rymcu.tenon.web;
 
-import com.alibaba.fastjson.JSONObject;
+import com.rymcu.tenon.core.constant.ProjectConstant;
 import com.rymcu.tenon.core.result.GlobalResult;
 import com.rymcu.tenon.core.result.GlobalResultGenerator;
 import com.rymcu.tenon.entity.User;
@@ -26,8 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.rymcu.tenon.core.constant.ProjectConstant;
-
 /**
  * Created on 2023/2/15 10:04.
  *
@@ -45,21 +43,7 @@ public class OpenAiController {
     private String apiKey;
 
     @PostMapping("/chat")
-    public GlobalResult chat(@RequestBody JSONObject jsonObject) {
-        String message = jsonObject.getString("message");
-        if (StringUtils.isBlank(message)) {
-            throw new IllegalArgumentException("参数异常！");
-        }
-        String model = jsonObject.getString("model");
-        User user = UserUtils.getCurrentUserByToken();
-        ChatMessage chatMessage = new ChatMessage("user", message);
-        List<ChatMessage> list = new ArrayList<>(4);
-        list.add(chatMessage);
-        return sendMessageStream(model, user.getIdUser(), list);
-    }
-
-    @PostMapping("/new-chat")
-    public GlobalResult newChat(@RequestBody ChatMessagePrompt chatMessagePrompt) {
+    public GlobalResult chat(@RequestBody ChatMessagePrompt chatMessagePrompt) {
         List<ChatMessage> messages = chatMessagePrompt.getMessages();
         if (messages.isEmpty()) {
             throw new IllegalArgumentException("参数异常！");
