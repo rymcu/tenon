@@ -70,7 +70,6 @@ jobs:
   triggers:
   - !BranchUpdateTrigger
     branches: master
-    paths: src/main/resources/application-pord.yml
     projects: tenon
   retryCondition: never
   maxRetries: 3
