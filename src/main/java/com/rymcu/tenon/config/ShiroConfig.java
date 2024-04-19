@@ -34,9 +34,6 @@ public class ShiroConfig {
 
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
         filterChainDefinitionMap.put("/api/v1/common/**", "anon");
-        filterChainDefinitionMap.put("/api/v1/order/**", "anon");
-        filterChainDefinitionMap.put("/api/v1/pay/**", "anon");
-        filterChainDefinitionMap.put("/api/v1/openai/**", "anon");
         filterChainDefinitionMap.put("/api/v1/auth/login/**", "anon");
         filterChainDefinitionMap.put("/api/v1/auth/logout/**", "anon");
         filterChainDefinitionMap.put("/api/v1/auth/refresh-token/**", "anon");
