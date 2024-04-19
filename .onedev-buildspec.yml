@@ -12,7 +12,7 @@ jobs:
   - !CommandStep
     name: delete build version
     runInContainer: true
-    image: maven:3.9.6-eclipse-temurin-21
+    image: '@script:builtin:maven:determine-docker-image@'
     interpreter: !DefaultInterpreter
       commands: |
         echo "Detecting project version (may require some time while downloading maven dependencies)..."
@@ -87,7 +87,7 @@ jobs:
   - !CommandStep
     name: delete build version
     runInContainer: true
-    image: maven:3.9.6-eclipse-temurin-21
+    image: '@script:builtin:maven:determine-docker-image@'
     interpreter: !DefaultInterpreter
       commands: |
         echo "Detecting project version (may require some time while downloading maven dependencies)..."
@@ -101,7 +101,7 @@ jobs:
   - !CommandStep
     name: run maven package
     runInContainer: true
-    image: maven:3.9.6-eclipse-temurin-21
+    image: '@script:builtin:maven:determine-docker-image@'
     interpreter: !DefaultInterpreter
       commands: |
         ENV ENCRYPTION_KEY @secret:encryption_key@
