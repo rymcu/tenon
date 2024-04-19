@@ -12,7 +12,7 @@ jobs:
   - !CommandStep
     name: delete build version
     runInContainer: true
-    image: '@script:builtin:maven:determine-docker-image@'
+    image: '@property:maven-image@'
     interpreter: !DefaultInterpreter
       commands: |
         echo "Detecting project version (may require some time while downloading maven dependencies)..."
