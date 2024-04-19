@@ -1,12 +1,12 @@
 package com.rymcu.tenon.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Date;
 
 /**
- * Created on 2024/4/17 10:22.
+ * Created on 2024/4/19 9:15.
  *
  * @author ronger
  * @email ronger-x@outlook.com
@@ -15,15 +15,29 @@ import java.util.Set;
 @Data
 public class UserInfo {
 
-    private String account;
+    private Long id;
 
     private String nickname;
 
-    private String avatar;
+    private String account;
 
-    private Set<String> scope;
+    private Avatar avatar;
 
-    private Set<String> role;
+    private String avatarUrl;
 
-    private List<Link> links;
+    private Integer status;
+
+    private String email;
+
+    @JSONField(format = "yyyy-MM-dd HH:mm")
+    private Date lastLoginTime;
+
+    @JSONField(format = "yyyy-MM-dd HH:mm")
+    private Date lastOnlineTime;
+
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    private Date createdTime;
+
+    private Integer onlineStatus;
+
 }

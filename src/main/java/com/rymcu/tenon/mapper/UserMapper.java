@@ -2,7 +2,10 @@ package com.rymcu.tenon.mapper;
 
 import com.rymcu.tenon.core.mapper.Mapper;
 import com.rymcu.tenon.entity.User;
+import com.rymcu.tenon.model.UserInfo;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * Created on 2024/4/13 15:03.
@@ -23,4 +26,6 @@ public interface UserMapper extends Mapper<User> {
     Integer selectCountByNickname(@Param("nickname") String nickname);
 
     String selectMaxAccount();
+
+    List<UserInfo> selectUsers(@Param("account") String account, @Param("email") String email, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("order") String order, @Param("sort") String sort);
 }

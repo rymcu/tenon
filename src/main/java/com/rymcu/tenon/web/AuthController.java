@@ -9,7 +9,7 @@ import com.rymcu.tenon.core.result.GlobalResultGenerator;
 import com.rymcu.tenon.entity.User;
 import com.rymcu.tenon.model.Link;
 import com.rymcu.tenon.model.TokenUser;
-import com.rymcu.tenon.model.UserInfo;
+import com.rymcu.tenon.model.AuthInfo;
 import com.rymcu.tenon.service.MenuService;
 import com.rymcu.tenon.service.UserService;
 import com.rymcu.tenon.util.BeanCopierUtil;
@@ -76,13 +76,13 @@ public class AuthController {
     @GetMapping("/user")
     public GlobalResult<JSONObject> user() {
         User user = UserUtils.getCurrentUserByToken();
-        UserInfo userInfo = new UserInfo();
-        BeanCopierUtil.copy(user, userInfo);
-        userInfo.setScope(userService.findUserPermissionsByIdUser(user.getIdUser()));
-        userInfo.setRole(userService.findUserRoleListByIdUser(user.getIdUser()));
-        userInfo.setLinks(menuService.findLinksByIdUser(user.getIdUser()));
+        AuthInfo authInfo = new AuthInfo();
+        BeanCopierUtil.copy(user, authInfo);
+        authInfo.setScope(userService.findUserPermissionsByIdUser(user.getIdUser()));
+        authInfo.setRole(userService.findUserRoleListByIdUser(user.getIdUser()));
+        authInfo.setLinks(menuService.findLinksByIdUser(user.getIdUser()));
         JSONObject object = new JSONObject();
-        object.put("user", userInfo);
+        object.put("user", authInfo);
         return GlobalResultGenerator.genSuccessResult(object);
     }
 

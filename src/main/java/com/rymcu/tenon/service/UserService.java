@@ -3,7 +3,10 @@ package com.rymcu.tenon.service;
 import com.rymcu.tenon.core.service.Service;
 import com.rymcu.tenon.model.TokenUser;
 import com.rymcu.tenon.entity.User;
+import com.rymcu.tenon.model.UserInfo;
+import com.rymcu.tenon.model.UserSearch;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,11 +43,43 @@ public interface UserService extends Service<User> {
      */
     TokenUser login(String account, String password);
 
+    /**
+     * 刷新 token 接口
+     *
+     * @param refreshToken 刷新 token
+     * @return TokenUser
+     */
     TokenUser refreshToken(String refreshToken);
 
+    /**
+     * 查询用户菜单权限
+     *
+     * @param idUser 用户 ID
+     * @return 菜单权限
+     */
     Set<String> findUserPermissionsByIdUser(Long idUser);
 
+    /**
+     * 获取用户角色
+     *
+     * @param idUser 用户 ID
+     * @return 角色
+     */
     Set<String> findUserRoleListByIdUser(Long idUser);
 
+    /**
+     * 查询用户信息
+     *
+     * @param account 账号
+     * @return 用户信息
+     */
     User findByAccount(String account);
+
+    /**
+     * 查询用户
+     *
+     * @param search 查询条件
+     * @return 用户信息列表
+     */
+    List<UserInfo> findUsers(UserSearch search);
 }

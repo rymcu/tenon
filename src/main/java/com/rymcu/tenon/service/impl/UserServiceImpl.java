@@ -9,11 +9,14 @@ import com.rymcu.tenon.core.service.AbstractService;
 import com.rymcu.tenon.entity.Menu;
 import com.rymcu.tenon.handler.event.RegisterEvent;
 import com.rymcu.tenon.mapper.MenuMapper;
+import com.rymcu.tenon.model.Avatar;
 import com.rymcu.tenon.model.TokenUser;
 import com.rymcu.tenon.entity.Role;
 import com.rymcu.tenon.entity.User;
 import com.rymcu.tenon.mapper.RoleMapper;
 import com.rymcu.tenon.mapper.UserMapper;
+import com.rymcu.tenon.model.UserInfo;
+import com.rymcu.tenon.model.UserSearch;
 import com.rymcu.tenon.service.UserService;
 import com.rymcu.tenon.util.Utils;
 import jakarta.annotation.Resource;
@@ -21,6 +24,8 @@ import jakarta.validation.constraints.NotBlank;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -147,7 +152,21 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public TokenUser refreshToken(String refreshToken) {
-        return null;
+        String account = redisTemplate.boundValueOps(refreshToken).get();
+        if (StringUtils.isNotBlank(account)) {
+            User user = userMapper.selectByAccount(account);
+            if (user != null) {
+                TokenUser tokenUser = new TokenUser();
+                tokenUser.setToken(tokenManager.createToken(user.getAccount()));
+                tokenUser.setRefreshToken(UlidCreator.getUlid().toString());
+                redisTemplate.boundValueOps(tokenUser.getRefreshToken()).set(account, JwtConstants.REFRESH_TOKEN_EXPIRES_HOUR, TimeUnit.HOURS);
+                redisTemplate.delete(refreshToken);
+                return tokenUser;
+            } else {
+                throw new UnknownAccountException("未知账号");
+            }
+        }
+        throw new UnauthenticatedException();
     }
 
     @Override
@@ -160,6 +179,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             }
         }
         permissions.add("user");
+        permissions.addAll(findUserRoleListByIdUser(idUser));
         return permissions;
     }
 
@@ -178,5 +198,23 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public User findByAccount(String account) {
         return userMapper.selectByAccount(account);
+    }
+
+    /**
+     * 查询用户
+     *
+     * @param search 查询条件
+     * @return 用户信息列表
+     */
+    @Override
+    public List<UserInfo> findUsers(UserSearch search) {
+        List<UserInfo> users = userMapper.selectUsers(search.getAccount(), search.getEmail(), search.getStartDate(), search.getEndDate(), search.getOrder(), search.getSort());
+        users.forEach(userInfo -> {
+            Avatar avatar = new Avatar();
+            avatar.setAlt(userInfo.getNickname());
+            avatar.setSrc(userInfo.getAvatarUrl());
+            userInfo.setAvatar(avatar);
+        });
+        return users;
     }
 }

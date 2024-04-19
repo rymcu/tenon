@@ -15,6 +15,17 @@
         <result column="last_online_time" property="lastOnlineTime"/>
         <result column="created_time" property="createdTime"/>
     </resultMap>
+    <resultMap id="UserInfoMap" type="com.rymcu.tenon.model.UserInfo">
+        <id column="id" property="id"/>
+        <result column="account" property="account"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatarUrl"/>
+        <result column="email" property="email"/>
+        <result column="status" property="status"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="last_online_time" property="lastOnlineTime"/>
+        <result column="created_time" property="createdTime"/>
+    </resultMap>
     <insert id="insertUserRole">
         insert into tenon_user_role (id_tenon_user, id_tenon_role) VALUES (#{idUser}, #{idRole})
     </insert>
@@ -41,5 +52,35 @@
     </select>
     <select id="selectMaxAccount" resultType="java.lang.String">
         select max(account) from tenon_user
+    </select>
+    <select id="selectUsers" resultMap="UserInfoMap">
+        select id,
+        nickname,
+        account,
+        status,
+        avatar,
+        email,
+        last_login_time,
+        last_online_time,
+        created_time
+        from tenon_user
+        <trim prefix="where" prefixOverrides="and">
+            <if test="account != null and account != ''">
+                and account = #{account}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and created_time between str_to_date(#{startDate}, '%Y-%m-%d') and str_to_date(#{endDate}, '%Y-%m-%d') +
+                interval 1 day
+            </if>
+        </trim>
+        <if test="sort != null and sort != ''">
+            order by #{sort}
+            <if test="order != null and order != ''">
+                #{order}
+            </if>
+        </if>
     </select>
 </mapper>
