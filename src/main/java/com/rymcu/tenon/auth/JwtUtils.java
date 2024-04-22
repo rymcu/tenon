@@ -29,8 +29,8 @@ public class JwtUtils {
     }
 
     public static TokenModel getTokenModel(String token) {
-
         if (StringUtils.isNotBlank(token)) {
+            token = token.replace("Bearer ", "");
             // 验证token
             Claims claims;
             try {
