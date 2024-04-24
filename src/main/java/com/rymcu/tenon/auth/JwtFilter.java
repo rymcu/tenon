@@ -2,6 +2,7 @@ package com.rymcu.tenon.auth;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rymcu.tenon.core.result.GlobalResultGenerator;
+import com.rymcu.tenon.core.result.ResultCode;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -110,7 +111,7 @@ public class JwtFilter extends BearerHttpAuthenticationFilter {
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             httpServletResponse.setContentType("application/json");
             httpServletResponse.setCharacterEncoding("UTF-8");
-            httpServletResponse.getOutputStream().write(JSONObject.toJSONString(GlobalResultGenerator.genErrorResult("未登录或已登录超时，请重新登录")).getBytes());
+            httpServletResponse.getOutputStream().write(JSONObject.toJSONString(GlobalResultGenerator.genErrorResult(ResultCode.UNAUTHENTICATED)).getBytes());
         } catch (IOException e) {
             // 错误日志
             log.error(e.getMessage());
