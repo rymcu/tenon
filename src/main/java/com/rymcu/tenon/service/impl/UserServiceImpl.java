@@ -3,7 +3,9 @@ package com.rymcu.tenon.service.impl;
 import com.github.f4b6a3.ulid.UlidCreator;
 import com.rymcu.tenon.auth.JwtConstants;
 import com.rymcu.tenon.auth.TokenManager;
+import com.rymcu.tenon.core.constant.ProjectConstant;
 import com.rymcu.tenon.core.exception.AccountExistsException;
+import com.rymcu.tenon.core.exception.BusinessException;
 import com.rymcu.tenon.core.exception.CaptchaException;
 import com.rymcu.tenon.core.service.AbstractService;
 import com.rymcu.tenon.entity.Menu;
@@ -70,8 +72,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean register(String email, String password, String code) {
-        String validateCode = redisTemplate.boundValueOps(email).get();
+    public Boolean register(String email, String nickname, String password, String code) {
+        String validateCodeKey = ProjectConstant.REDIS_REGISTER + email;
+        String validateCode = redisTemplate.boundValueOps(validateCodeKey).get();
         if (StringUtils.isNotBlank(validateCode)) {
             if (validateCode.equals(code)) {
                 User user = userMapper.selectByAccount(email);
@@ -79,7 +82,6 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                     throw new AccountExistsException("该邮箱已被注册！");
                 } else {
                     user = new User();
-                    String nickname = email.split("@")[0];
                     user.setNickname(checkNickname(nickname));
                     user.setAccount(nextAccount());
                     user.setEmail(email);
@@ -88,7 +90,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                     userMapper.insertSelective(user);
                     // 注册成功后执行相关初始化事件
                     applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getAccount()));
-                    redisTemplate.delete(email);
+                    redisTemplate.delete(validateCodeKey);
                     return true;
                 }
             }
@@ -216,5 +218,19 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             userInfo.setAvatar(avatar);
         });
         return users;
+    }
+
+    @Override
+    public Boolean forgetPassword(String code, String password) {
+        String email = redisTemplate.boundValueOps(code).get();
+        if (StringUtils.isBlank(email)) {
+            throw new BusinessException("链接已失效");
+        } else {
+            int result = userMapper.updatePasswordByEmail(email, Utils.encryptPassword(password));
+            if (result == 0) {
+                throw new BusinessException("密码修改失败!");
+            }
+            return true;
+        }
     }
 }

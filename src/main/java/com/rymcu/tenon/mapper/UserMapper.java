@@ -23,9 +23,11 @@ public interface UserMapper extends Mapper<User> {
 
     int insertUserRole(@Param("idUser") Long idUser, @Param("idRole") Long idRole);
 
-    Integer selectCountByNickname(@Param("nickname") String nickname);
+    int selectCountByNickname(@Param("nickname") String nickname);
 
     String selectMaxAccount();
 
     List<UserInfo> selectUsers(@Param("account") String account, @Param("email") String email, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("order") String order, @Param("sort") String sort);
+
+    int updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
 }

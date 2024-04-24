@@ -6,18 +6,14 @@ import com.rymcu.tenon.core.result.GlobalResult;
 import com.rymcu.tenon.core.result.GlobalResultGenerator;
 import com.rymcu.tenon.core.result.GlobalResultMessage;
 import com.rymcu.tenon.entity.User;
+import com.rymcu.tenon.model.ForgetPasswordInfo;
+import com.rymcu.tenon.model.RegisterInfo;
 import com.rymcu.tenon.service.JavaMailService;
 import com.rymcu.tenon.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.mail.MessagingException;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created on 2024/4/18 18:43.
@@ -61,5 +57,17 @@ public class CommonController {
             throw new UnknownAccountException("未知账号");
         }
         return GlobalResultGenerator.genSuccessResult(GlobalResultMessage.SEND_SUCCESS.getMessage());
+    }
+
+    @PatchMapping("/forget-password")
+    public GlobalResult<Boolean> forgetPassword(@RequestBody ForgetPasswordInfo forgetPassword) throws ServiceException {
+        boolean flag = userService.forgetPassword(forgetPassword.getCode(), forgetPassword.getPassword());
+        return GlobalResultGenerator.genSuccessResult(flag);
+    }
+
+    @PostMapping("/register")
+    public GlobalResult<Boolean> register(@RequestBody RegisterInfo registerInfo) {
+        boolean flag = userService.register(registerInfo.getEmail(), registerInfo.getNickname(), registerInfo.getPassword(), registerInfo.getCode());
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 }

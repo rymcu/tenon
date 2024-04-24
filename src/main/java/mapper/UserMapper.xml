@@ -35,6 +35,9 @@
     <update id="updateLastLoginTime">
         update tenon_user set last_login_time = sysdate() where id = #{idUser}
     </update>
+    <update id="updatePasswordByEmail">
+        update tenon_user set password = #{password} where email = #{email}
+    </update>
     <select id="selectByAccount" resultMap="BaseResultMap">
         select id,
                nickname,

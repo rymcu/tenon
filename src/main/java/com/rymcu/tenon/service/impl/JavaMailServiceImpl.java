@@ -1,5 +1,6 @@
 package com.rymcu.tenon.service.impl;
 
+import com.rymcu.tenon.core.constant.ProjectConstant;
 import com.rymcu.tenon.core.service.redis.RedisService;
 import com.rymcu.tenon.service.JavaMailService;
 import com.rymcu.tenon.service.UserService;
@@ -81,7 +82,7 @@ public class JavaMailServiceImpl implements JavaMailService {
         simpleMailMessage.setTo(to);
         if (type == 0) {
             Integer code = Utils.genCode();
-            redisTemplate.boundValueOps(to).set(String.valueOf(code), 5, TimeUnit.MINUTES);
+            redisTemplate.boundValueOps(ProjectConstant.REDIS_REGISTER + to).set(String.valueOf(code), 5, TimeUnit.MINUTES);
             simpleMailMessage.setSubject("新用户注册邮箱验证");
             simpleMailMessage.setText("【RYMCU】您的校验码是 " + code + ",有效时间 5 分钟，请不要泄露验证码给其他人。如非本人操作,请忽略！");
             mailSender.send(simpleMailMessage);
@@ -89,7 +90,7 @@ public class JavaMailServiceImpl implements JavaMailService {
         } else if (type == 1) {
             String code = Utils.encryptPassword(to);
             String url = BASE_URL + "/forget-password?code=" + code;
-            redisTemplate.boundValueOps(to).set(code, 5, TimeUnit.MINUTES);
+            redisTemplate.boundValueOps(code).set(ProjectConstant.REDIS_FORGET_PASSWORD + to, 5, TimeUnit.MINUTES);
 
             String thymeleafTemplatePath = "mail/forgetPasswordTemplate";
             Map<String, Object> thymeleafTemplateVariable = new HashMap<String, Object>(1);
@@ -114,7 +115,7 @@ public class JavaMailServiceImpl implements JavaMailService {
         props.put("mail.smtp.host", SERVER_HOST);
         props.put("mail.smtp.port", SERVER_PORT);
         // 如果使用ssl，则去掉使用25端口的配置，进行如下配置,
-        props.put("mail.smtp.socketFactory.class", "com.rymcu.forest.util.MailSSLSocketFactory");
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtp.socketFactory.port", SERVER_PORT);
         // 发件人的账号，填写控制台配置的发信地址,比如xxx@xxx.com
         props.put("mail.user", USERNAME);

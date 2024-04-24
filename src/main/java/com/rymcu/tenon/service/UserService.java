@@ -28,11 +28,12 @@ public interface UserService extends Service<User> {
      * 注册接口
      *
      * @param email    邮箱
+     * @param nickname 昵称
      * @param password 密码
      * @param code     验证码
      * @return Boolean 注册成功标志
      */
-    Boolean register(String email, String password, String code);
+    Boolean register(String email, String nickname, String password, String code);
 
     /**
      * 登录接口
@@ -82,4 +83,6 @@ public interface UserService extends Service<User> {
      * @return 用户信息列表
      */
     List<UserInfo> findUsers(UserSearch search);
+
+    Boolean forgetPassword(String code, String password);
 }
