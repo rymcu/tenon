@@ -3,6 +3,8 @@ package com.rymcu.tenon.service.impl;
 import com.rymcu.tenon.core.service.AbstractService;
 import com.rymcu.tenon.entity.Role;
 import com.rymcu.tenon.mapper.RoleMapper;
+import com.rymcu.tenon.model.RoleSearch;
+import com.rymcu.tenon.model.UserInfo;
 import com.rymcu.tenon.service.RoleService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -30,5 +32,11 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
     @Override
     public Boolean postRole(Role role) {
         return roleMapper.insertSelective(role) > 0;
+    }
+
+    @Override
+    public List<Role> findRoles(RoleSearch search) {
+        return roleMapper.selectRoles(search.getLabel(), search.getStartDate(), search.getEndDate(), search.getOrder(), search.getSort());
+
     }
 }

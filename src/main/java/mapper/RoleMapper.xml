@@ -18,4 +18,18 @@
     <select id="selectRoleByPermission" resultMap="BaseResultMap">
         select id, label, permission from tenon_role where permission = #{permission}
     </select>
+    <select id="selectRoles" resultMap="BaseResultMap">
+        select id, label, permission, status from tenon_role
+        <trim prefix="where" prefixOverrides="and">
+            <if test="label != null and label != ''">
+                and label = #{label}
+            </if>
+        </trim>
+        <if test="sort != null and sort != ''">
+            order by #{sort}
+            <if test="order != null and order != ''">
+                #{order}
+            </if>
+        </if>
+    </select>
 </mapper>

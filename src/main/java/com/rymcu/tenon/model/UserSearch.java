@@ -18,8 +18,4 @@ public class UserSearch extends BaseSearch {
 
     private String account;
 
-    private String startDate;
-
-    private String endDate;
-
 }

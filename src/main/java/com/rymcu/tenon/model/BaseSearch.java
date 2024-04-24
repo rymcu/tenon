@@ -22,4 +22,8 @@ public class BaseSearch {
 
     private Integer pageSize = 10;
 
+    private String startDate;
+
+    private String endDate;
+
 }
