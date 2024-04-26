@@ -85,4 +85,8 @@ public interface UserService extends Service<User> {
     List<UserInfo> findUsers(UserSearch search);
 
     Boolean forgetPassword(String code, String password);
+
+    UserInfo findUserInfoById(Long idUser);
+
+    Boolean postUser(UserInfo userInfo);
 }

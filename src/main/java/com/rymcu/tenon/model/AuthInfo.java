@@ -21,6 +21,8 @@ public class AuthInfo {
 
     private String avatar;
 
+    private Set<String> permissions;
+
     private Set<String> scope;
 
     private Set<String> role;

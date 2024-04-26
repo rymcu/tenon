@@ -7,6 +7,7 @@ import com.rymcu.tenon.core.constant.ProjectConstant;
 import com.rymcu.tenon.core.exception.AccountExistsException;
 import com.rymcu.tenon.core.exception.BusinessException;
 import com.rymcu.tenon.core.exception.CaptchaException;
+import com.rymcu.tenon.core.exception.NicknameOccupyException;
 import com.rymcu.tenon.core.service.AbstractService;
 import com.rymcu.tenon.entity.Menu;
 import com.rymcu.tenon.handler.event.RegisterEvent;
@@ -101,7 +102,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     private String checkNickname(String nickname) {
         nickname = formatNickname(nickname);
-        Integer result = userMapper.selectCountByNickname(nickname);
+        int result = userMapper.selectCountByNickname(nickname);
         if (result > 0) {
             StringBuilder stringBuilder = new StringBuilder(nickname);
             return checkNickname(stringBuilder.append("_").append(System.currentTimeMillis()).toString());
@@ -224,7 +225,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public Boolean forgetPassword(String code, String password) {
         String email = redisTemplate.boundValueOps(code).get();
         if (StringUtils.isBlank(email)) {
-            throw new BusinessException("链接已失效");
+            throw new CaptchaException();
         } else {
             int result = userMapper.updatePasswordByEmail(email, Utils.encryptPassword(password));
             if (result == 0) {
@@ -232,5 +233,36 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             }
             return true;
         }
+    }
+
+    @Override
+    public UserInfo findUserInfoById(Long idUser) {
+        return userMapper.selectUserInfoById(idUser);
+    }
+
+    @Override
+    public Boolean postUser(UserInfo userInfo) {
+        int result;
+        User user = userMapper.selectByAccount(userInfo.getEmail());
+        if (Objects.nonNull(user)) {
+            // 用户已存在
+            user.setEmail(userInfo.getEmail());
+            user.setNickname(checkNickname(userInfo.getNickname()));
+            user.setStatus(userInfo.getStatus());
+            result = userMapper.updateByPrimaryKeySelective(user);
+        } else {
+            user.setEmail(userInfo.getEmail());
+            user.setNickname(checkNickname(userInfo.getNickname()));
+            String code = String.valueOf(Utils.genCode());
+            user.setPassword(Utils.encryptPassword(code));
+            user.setAvatar(DEFAULT_AVATAR);
+            user.setAccount(nextAccount());
+            result = userMapper.insertSelective(user);
+            if (result > 0) {
+                // 注册成功后执行相关初始化事件
+                applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getAccount()));
+            }
+        }
+        return result > 0;
     }
 }

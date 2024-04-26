@@ -30,4 +30,6 @@ public interface UserMapper extends Mapper<User> {
     List<UserInfo> selectUsers(@Param("account") String account, @Param("email") String email, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("order") String order, @Param("sort") String sort);
 
     int updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
+
+    UserInfo selectUserInfoById(@Param("idUser") Long idUser);
 }

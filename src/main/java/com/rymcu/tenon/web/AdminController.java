@@ -5,15 +5,15 @@ import com.github.pagehelper.PageInfo;
 import com.rymcu.tenon.core.result.GlobalResult;
 import com.rymcu.tenon.core.result.GlobalResultGenerator;
 import com.rymcu.tenon.entity.Role;
+import com.rymcu.tenon.entity.User;
 import com.rymcu.tenon.model.RoleSearch;
 import com.rymcu.tenon.model.UserInfo;
 import com.rymcu.tenon.model.UserSearch;
 import com.rymcu.tenon.service.RoleService;
 import com.rymcu.tenon.service.UserService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/admin")
+@RequiresRoles("admin")
 public class AdminController {
 
     @Resource
@@ -47,6 +48,26 @@ public class AdminController {
         List<Role> list = roleService.findRoles(search);
         PageInfo<Role> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
+    }
+
+    @GetMapping("/role/{idRole}")
+    public GlobalResult<Role> role(@PathVariable Long idRole) {
+        return GlobalResultGenerator.genSuccessResult(roleService.findById(String.valueOf(idRole)));
+    }
+
+    @GetMapping("/user/{idUser}")
+    public GlobalResult<UserInfo> user(@PathVariable Long idUser) {
+        return GlobalResultGenerator.genSuccessResult(userService.findUserInfoById(idUser));
+    }
+
+    @PostMapping("/user/post")
+    public GlobalResult<Boolean> postUser(@RequestBody UserInfo userInfo) {
+        return GlobalResultGenerator.genSuccessResult(userService.postUser(userInfo));
+    }
+
+    @PostMapping("/role/post")
+    public GlobalResult<Boolean> postRole(@RequestBody Role role) {
+        return GlobalResultGenerator.genSuccessResult(roleService.postRole(role));
     }
 
 

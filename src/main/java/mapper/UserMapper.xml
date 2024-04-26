@@ -86,4 +86,17 @@
             </if>
         </if>
     </select>
+    <select id="selectUserInfoById" resultMap="UserInfoMap">
+        select id,
+               nickname,
+               account,
+               status,
+               avatar,
+               email,
+               last_login_time,
+               last_online_time,
+               created_time
+        from tenon_user
+        where id = #{idUser}
+    </select>
 </mapper>

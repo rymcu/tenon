@@ -49,7 +49,7 @@ public class Menu {
     /**
      * 状态
      */
-    private String status;
+    private Integer status;
     /**
      * 类型
      */
