@@ -14,6 +14,8 @@ import lombok.Setter;
 @Setter
 public class BaseSearch {
 
+    private String q;
+
     private String sort;
 
     private String order;

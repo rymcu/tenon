@@ -5,10 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.rymcu.tenon.core.result.GlobalResult;
 import com.rymcu.tenon.core.result.GlobalResultGenerator;
 import com.rymcu.tenon.entity.Role;
-import com.rymcu.tenon.entity.User;
-import com.rymcu.tenon.model.RoleSearch;
-import com.rymcu.tenon.model.UserInfo;
-import com.rymcu.tenon.model.UserSearch;
+import com.rymcu.tenon.model.*;
+import com.rymcu.tenon.service.MenuService;
 import com.rymcu.tenon.service.RoleService;
 import com.rymcu.tenon.service.UserService;
 import jakarta.annotation.Resource;
@@ -33,6 +31,8 @@ public class AdminController {
     private UserService userService;
     @Resource
     private RoleService roleService;
+    @Resource
+    private MenuService menuService;
 
     @GetMapping("/users")
     public GlobalResult<PageInfo<UserInfo>> users(UserSearch search) {
@@ -40,6 +40,16 @@ public class AdminController {
         List<UserInfo> list = userService.findUsers(search);
         PageInfo<UserInfo> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
+    }
+
+    @GetMapping("/user/{idUser}")
+    public GlobalResult<UserInfo> user(@PathVariable Long idUser) {
+        return GlobalResultGenerator.genSuccessResult(userService.findUserInfoById(idUser));
+    }
+
+    @PostMapping("/user/post")
+    public GlobalResult<Boolean> postUser(@RequestBody UserInfo userInfo) {
+        return GlobalResultGenerator.genSuccessResult(userService.postUser(userInfo));
     }
 
     @GetMapping("/roles")
@@ -55,19 +65,14 @@ public class AdminController {
         return GlobalResultGenerator.genSuccessResult(roleService.findById(String.valueOf(idRole)));
     }
 
-    @GetMapping("/user/{idUser}")
-    public GlobalResult<UserInfo> user(@PathVariable Long idUser) {
-        return GlobalResultGenerator.genSuccessResult(userService.findUserInfoById(idUser));
-    }
-
-    @PostMapping("/user/post")
-    public GlobalResult<Boolean> postUser(@RequestBody UserInfo userInfo) {
-        return GlobalResultGenerator.genSuccessResult(userService.postUser(userInfo));
-    }
-
     @PostMapping("/role/post")
     public GlobalResult<Boolean> postRole(@RequestBody Role role) {
         return GlobalResultGenerator.genSuccessResult(roleService.postRole(role));
+    }
+
+    @GetMapping("/menus")
+    public GlobalResult<List<Link>> menus(MenuSearch search) {
+        return GlobalResultGenerator.genSuccessResult(menuService.findMenus(search));
     }
 
 

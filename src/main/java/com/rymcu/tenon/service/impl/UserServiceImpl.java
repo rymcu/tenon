@@ -7,17 +7,16 @@ import com.rymcu.tenon.core.constant.ProjectConstant;
 import com.rymcu.tenon.core.exception.AccountExistsException;
 import com.rymcu.tenon.core.exception.BusinessException;
 import com.rymcu.tenon.core.exception.CaptchaException;
-import com.rymcu.tenon.core.exception.NicknameOccupyException;
 import com.rymcu.tenon.core.service.AbstractService;
 import com.rymcu.tenon.entity.Menu;
-import com.rymcu.tenon.handler.event.RegisterEvent;
-import com.rymcu.tenon.mapper.MenuMapper;
-import com.rymcu.tenon.model.Avatar;
-import com.rymcu.tenon.model.TokenUser;
 import com.rymcu.tenon.entity.Role;
 import com.rymcu.tenon.entity.User;
+import com.rymcu.tenon.handler.event.RegisterEvent;
+import com.rymcu.tenon.mapper.MenuMapper;
 import com.rymcu.tenon.mapper.RoleMapper;
 import com.rymcu.tenon.mapper.UserMapper;
+import com.rymcu.tenon.model.Avatar;
+import com.rymcu.tenon.model.TokenUser;
 import com.rymcu.tenon.model.UserInfo;
 import com.rymcu.tenon.model.UserSearch;
 import com.rymcu.tenon.service.UserService;
@@ -26,9 +25,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotBlank;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -36,7 +33,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -241,28 +241,28 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean postUser(UserInfo userInfo) {
-        int result;
         User user = userMapper.selectByAccount(userInfo.getEmail());
         if (Objects.nonNull(user)) {
             // 用户已存在
             user.setEmail(userInfo.getEmail());
             user.setNickname(checkNickname(userInfo.getNickname()));
             user.setStatus(userInfo.getStatus());
-            result = userMapper.updateByPrimaryKeySelective(user);
-        } else {
-            user.setEmail(userInfo.getEmail());
-            user.setNickname(checkNickname(userInfo.getNickname()));
-            String code = String.valueOf(Utils.genCode());
-            user.setPassword(Utils.encryptPassword(code));
-            user.setAvatar(DEFAULT_AVATAR);
-            user.setAccount(nextAccount());
-            result = userMapper.insertSelective(user);
-            if (result > 0) {
-                // 注册成功后执行相关初始化事件
-                applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getAccount()));
-            }
+            return userMapper.updateByPrimaryKeySelective(user) > 0;
         }
-        return result > 0;
+        user = new User();
+        user.setEmail(userInfo.getEmail());
+        user.setNickname(checkNickname(userInfo.getNickname()));
+        String code = String.valueOf(Utils.genCode());
+        user.setPassword(Utils.encryptPassword(code));
+        user.setAvatar(DEFAULT_AVATAR);
+        user.setAccount(nextAccount());
+        boolean result = userMapper.insertSelective(user) > 0;
+        if (result) {
+            // 注册成功后执行相关初始化事件
+            applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getAccount()));
+        }
+        return result;
     }
 }

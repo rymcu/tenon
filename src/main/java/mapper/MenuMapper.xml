@@ -47,4 +47,14 @@
                                   where tur.id_tenon_role = trm.id_tenon_role
                                     and tur.id_tenon_user = #{idUser}))
     </select>
+    <select id="selectMenuListByParentId" resultMap="BaseResultMap">
+        select id, label, permission, parent_id, sort, menu_type, icon, href, created_time, updated_time, status
+        from tenon_menu
+        <trim prefix="where" prefixOverrides="and">
+            <if test="parent_id != null and parent_id != ''">
+                and parent_id = #{parentId}
+            </if>
+        </trim>
+
+    </select>
 </mapper>

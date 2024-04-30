@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Created on 2024/4/22 20:20.
+ * Created on 2024/4/30 15:21.
  *
  * @author ronger
  * @email ronger-x@outlook.com
@@ -14,8 +14,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RoleSearch extends BaseSearch {
-
-    private String label;
-
+public class MenuSearch extends BaseSearch {
+    private Long parentId;
 }

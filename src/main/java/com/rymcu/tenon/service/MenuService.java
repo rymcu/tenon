@@ -3,6 +3,7 @@ package com.rymcu.tenon.service;
 import com.rymcu.tenon.core.service.Service;
 import com.rymcu.tenon.entity.Menu;
 import com.rymcu.tenon.model.Link;
+import com.rymcu.tenon.model.MenuSearch;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface MenuService extends Service<Menu> {
     List<Menu> findMenusByIdRole(Long idRole);
 
     List<Link> findLinksByIdUser(Long idUser);
+
+    List<Link> findMenus(MenuSearch search);
 }
