@@ -19,4 +19,6 @@ public interface RoleMapper extends Mapper<Role> {
     Role selectRoleByPermission(@Param("permission") String permission);
 
     List<Role> selectRoles(@Param("label") String label, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("order") String order, @Param("sort") String sort);
+
+    int insertRoleMenu(@Param("idRole") Long idRole, @Param("idMenu") Long idMenu);
 }

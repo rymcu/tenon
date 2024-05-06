@@ -15,5 +15,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MenuSearch extends BaseSearch {
+
     private Long parentId;
+
+    private String label;
+
 }

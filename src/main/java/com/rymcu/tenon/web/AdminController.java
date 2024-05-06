@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.tenon.core.result.GlobalResult;
 import com.rymcu.tenon.core.result.GlobalResultGenerator;
+import com.rymcu.tenon.entity.Menu;
 import com.rymcu.tenon.entity.Role;
 import com.rymcu.tenon.model.*;
 import com.rymcu.tenon.service.MenuService;
@@ -52,6 +53,11 @@ public class AdminController {
         return GlobalResultGenerator.genSuccessResult(userService.postUser(userInfo));
     }
 
+    @PostMapping("/user/bind-role")
+    public GlobalResult<Boolean> bindUserRole(@RequestBody BindUserRoleInfo bindUserRoleInfo) {
+        return GlobalResultGenerator.genSuccessResult(userService.bindUserRole(bindUserRoleInfo));
+    }
+
     @GetMapping("/roles")
     public GlobalResult<PageInfo<Role>> roles(RoleSearch search) {
         PageHelper.startPage(search.getPageNum(), search.getPageSize());
@@ -70,9 +76,33 @@ public class AdminController {
         return GlobalResultGenerator.genSuccessResult(roleService.postRole(role));
     }
 
+    @GetMapping("/role/bind-menu")
+    public GlobalResult<Boolean> bindRoleMenu(@RequestBody BindRoleMenuInfo bindRoleMenuInfo) {
+        return GlobalResultGenerator.genSuccessResult(roleService.bindRoleMenu(bindRoleMenuInfo));
+    }
+
     @GetMapping("/menus")
     public GlobalResult<List<Link>> menus(MenuSearch search) {
-        return GlobalResultGenerator.genSuccessResult(menuService.findMenus(search));
+        List<Link> list = menuService.findMenus(search);
+        return GlobalResultGenerator.genSuccessResult(list);
+    }
+
+    @GetMapping("/children-menus")
+    public GlobalResult<PageInfo<Link>> childrenMenus(MenuSearch search) {
+        PageHelper.startPage(search.getPageNum(), search.getPageSize());
+        List<Link> list = menuService.findChildrenMenus(search);
+        PageInfo<Link> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
+    }
+
+    @GetMapping("/menu/{idMenu}")
+    public GlobalResult<Menu> menu(@PathVariable Long idMenu) {
+        return GlobalResultGenerator.genSuccessResult(menuService.findById(String.valueOf(idMenu)));
+    }
+
+    @PostMapping("/menu/post")
+    public GlobalResult<Boolean> postMenu(@RequestBody Menu menu) {
+        return GlobalResultGenerator.genSuccessResult(menuService.postMenu(menu));
     }
 
 

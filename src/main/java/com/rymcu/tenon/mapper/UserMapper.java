@@ -32,4 +32,6 @@ public interface UserMapper extends Mapper<User> {
     int updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
 
     UserInfo selectUserInfoById(@Param("idUser") Long idUser);
+
+    int deleteUserRole(@Param("idUser") Long idUser);
 }

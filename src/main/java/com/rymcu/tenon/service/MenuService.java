@@ -20,4 +20,8 @@ public interface MenuService extends Service<Menu> {
     List<Link> findLinksByIdUser(Long idUser);
 
     List<Link> findMenus(MenuSearch search);
+
+    Boolean postMenu(Menu menu);
+
+    List<Link> findChildrenMenus(MenuSearch search);
 }

@@ -8,9 +8,12 @@ import com.rymcu.tenon.model.MenuSearch;
 import com.rymcu.tenon.service.MenuService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created on 2024/4/17 9:49.
@@ -37,7 +40,45 @@ public class MenuServiceImpl extends AbstractService<Menu> implements MenuServic
 
     @Override
     public List<Link> findMenus(MenuSearch search) {
-        List<Menu> menus = menuMapper.selectMenuListByParentId(search.getParentId());
+        List<Menu> menus = menuMapper.selectMenuListByLabelAndParentId(search.getLabel(), search.getParentId());
+        List<Link> links = new ArrayList<>();
+        for (Menu menu : menus) {
+            Link link = new Link();
+            link.setId(menu.getIdMenu());
+            link.setLabel(menu.getLabel());
+            link.setParentId(menu.getParentId());
+            link.setIcon(menu.getIcon());
+            MenuSearch menuSearch = new MenuSearch();
+            menuSearch.setParentId(menu.getIdMenu());
+            link.setChildren(findMenus(menuSearch));
+            links.add(link);
+        }
+        return links;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean postMenu(Menu menu) {
+        Menu oldMenu = menuMapper.selectByPrimaryKey(menu.getIdMenu());
+        if (Objects.nonNull(oldMenu)) {
+            oldMenu.setLabel(menu.getLabel());
+            oldMenu.setPermission(menu.getPermission());
+            oldMenu.setIcon(menu.getIcon());
+            oldMenu.setHref(menu.getHref());
+            oldMenu.setStatus(menu.getStatus());
+            oldMenu.setMenuType(menu.getMenuType());
+            oldMenu.setSort(menu.getSort());
+            oldMenu.setParentId(menu.getParentId());
+            oldMenu.setUpdatedTime(menu.getUpdatedTime());
+            return menuMapper.updateByPrimaryKeySelective(oldMenu) > 0;
+        }
+        menu.setCreatedTime(new Date());
+        return menuMapper.insertSelective(menu) > 0;
+    }
+
+    @Override
+    public List<Link> findChildrenMenus(MenuSearch search) {
+        List<Menu> menus = menuMapper.selectMenuListByLabelAndParentId(search.getLabel(), search.getParentId());
         List<Link> links = new ArrayList<>();
         for (Menu menu : menus) {
             Link link = new Link();
@@ -46,9 +87,7 @@ public class MenuServiceImpl extends AbstractService<Menu> implements MenuServic
             link.setParentId(menu.getParentId());
             link.setTo(menu.getHref());
             link.setIcon(menu.getIcon());
-            MenuSearch menuSearch = new MenuSearch();
-            menuSearch.setParentId(menu.getIdMenu());
-            link.setChildren(findMenus(menuSearch));
+            link.setStatus(String.valueOf(menu.getStatus()));
             links.add(link);
         }
         return links;

@@ -38,6 +38,9 @@
     <update id="updatePasswordByEmail">
         update tenon_user set password = #{password} where email = #{email}
     </update>
+    <delete id="deleteUserRole">
+        delete from tenon_user_role where id_tenon_user = #{idUser}
+    </delete>
     <select id="selectByAccount" resultMap="BaseResultMap">
         select id,
                nickname,
