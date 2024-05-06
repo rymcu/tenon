@@ -77,6 +77,9 @@
             <if test="email != null and email != ''">
                 and email = #{email}
             </if>
+            <if test="query != null and query != ''">
+                and (instr(account, #{query}) > 0 or instr(nickname, #{query}) > 0)
+            </if>
             <if test="startDate != null and startDate != ''">
                 and created_time between str_to_date(#{startDate}, '%Y-%m-%d') and str_to_date(#{endDate}, '%Y-%m-%d') +
                 interval 1 day

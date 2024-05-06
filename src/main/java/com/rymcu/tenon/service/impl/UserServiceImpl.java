@@ -205,7 +205,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
      */
     @Override
     public List<UserInfo> findUsers(UserSearch search) {
-        List<UserInfo> users = userMapper.selectUsers(search.getAccount(), search.getEmail(), search.getStartDate(), search.getEndDate(), search.getOrder(), search.getSort());
+        List<UserInfo> users = userMapper.selectUsers(search.getAccount(), search.getEmail(), search.getStartDate(), search.getEndDate(), search.getOrder(), search.getSort(), search.getQ());
         users.forEach(userInfo -> {
             Avatar avatar = new Avatar();
             avatar.setAlt(userInfo.getNickname());

@@ -51,9 +51,14 @@
         select id, label, permission, parent_id, sort, menu_type, icon, href, created_time, updated_time, status
         from tenon_menu
         <trim prefix="where" prefixOverrides="and">
-            <if test="parent_id != null and parent_id != ''">
-                and parent_id = #{parentId}
-            </if>
+            <choose>
+                <when test="parentId != null and parentId != ''">
+                    and parent_id = #{parentId}
+                </when>
+                <otherwise>
+                    and parent_id = 0
+                </otherwise>
+            </choose>
         </trim>
     </select>
     <select id="selectMenuListByLabelAndParentId" resultMap="BaseResultMap">
@@ -63,9 +68,14 @@
             <if test="label != null and label != ''">
                 and label = #{label}
             </if>
-            <if test="parentId != null and parentId != ''">
-                and parent_id = #{parentId}
-            </if>
+            <choose>
+                <when test="parentId != null and parentId != ''">
+                    and parent_id = #{parentId}
+                </when>
+                <otherwise>
+                    and parent_id = 0
+                </otherwise>
+            </choose>
         </trim>
     </select>
 </mapper>
