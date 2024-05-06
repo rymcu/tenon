@@ -9,6 +9,9 @@
         <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
     </resultMap>
+    <insert id="insertRoleMenu">
+        insert into tenon_role_menu (id_tenon_role, id_tenon_menu) values (#{idRole}, #{idMenu})
+    </insert>
     <select id="selectRolesByIdUser" resultMap="BaseResultMap">
         select tr.id, tr.label, tr.permission
         from tenon_user_role tur

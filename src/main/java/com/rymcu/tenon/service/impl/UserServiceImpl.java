@@ -15,10 +15,7 @@ import com.rymcu.tenon.handler.event.RegisterEvent;
 import com.rymcu.tenon.mapper.MenuMapper;
 import com.rymcu.tenon.mapper.RoleMapper;
 import com.rymcu.tenon.mapper.UserMapper;
-import com.rymcu.tenon.model.Avatar;
-import com.rymcu.tenon.model.TokenUser;
-import com.rymcu.tenon.model.UserInfo;
-import com.rymcu.tenon.model.UserSearch;
+import com.rymcu.tenon.model.*;
 import com.rymcu.tenon.service.UserService;
 import com.rymcu.tenon.util.Utils;
 import jakarta.annotation.Resource;
@@ -33,10 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -249,6 +243,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             user.setEmail(userInfo.getEmail());
             user.setNickname(checkNickname(userInfo.getNickname()));
             user.setStatus(userInfo.getStatus());
+            user.setAvatar(userInfo.getAvatar().getSrc());
             return userMapper.updateByPrimaryKeySelective(user) > 0;
         }
         user = new User();
@@ -258,11 +253,32 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         user.setPassword(Utils.encryptPassword(code));
         user.setAvatar(DEFAULT_AVATAR);
         user.setAccount(nextAccount());
+        user.setCreatedTime(new Date());
         boolean result = userMapper.insertSelective(user) > 0;
         if (result) {
             // 注册成功后执行相关初始化事件
             applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getAccount()));
         }
         return result;
+    }
+
+    @Override
+    public Boolean updateUserInfo(UserInfo userInfo) {
+        User user = userMapper.selectByPrimaryKey(userInfo.getIdUser());
+        user.setNickname(checkNickname(userInfo.getNickname()));
+        user.setAvatar(userInfo.getAvatar().getSrc());
+        user.setEmail(userInfo.getEmail());
+        return userMapper.updateByPrimaryKeySelective(user) > 0;
+    }
+
+    @Override
+    public Boolean bindUserRole(BindUserRoleInfo bindUserRoleInfo) {
+        int num = 0;
+        // 先删除原有关系
+        userMapper.deleteUserRole(bindUserRoleInfo.getIdUser());
+        for (Long idRole : bindUserRoleInfo.getIdRoles()) {
+            num += userMapper.insertUserRole(bindUserRoleInfo.getIdUser(), idRole);
+        }
+        return num == bindUserRoleInfo.getIdRoles().size();
     }
 }

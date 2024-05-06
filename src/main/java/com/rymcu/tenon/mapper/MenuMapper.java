@@ -21,4 +21,6 @@ public interface MenuMapper extends Mapper<Menu> {
     List<Menu> selectMenuListByIdUserAndParentId(@Param("idUser") Long idUser, @Param("parentId") Long parentId);
 
     List<Menu> selectMenuListByParentId(@Param("parentId") Long parentId);
+
+    List<Menu> selectMenuListByLabelAndParentId(@Param("label") String label, @Param("parentId") Long parentId);
 }

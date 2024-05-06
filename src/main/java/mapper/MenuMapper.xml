@@ -36,9 +36,9 @@
                                     and tur.id_tenon_user = #{idUser}))
     </select>
     <select id="selectMenuListByIdUserAndParentId" resultMap="BaseResultMap">
-        select id, label, permission
+        select id, label, permission, parent_id, sort, menu_type, icon, href
         from tenon_menu tm
-        where status = 1 and parent_id = #{parentId}
+        where status = 1 and menu_type = 0 and parent_id = #{parentId}
           and exists(select 1
                      from tenon_role_menu trm
                      where trm.id_tenon_menu = tm.id
@@ -55,6 +55,17 @@
                 and parent_id = #{parentId}
             </if>
         </trim>
-
+    </select>
+    <select id="selectMenuListByLabelAndParentId" resultMap="BaseResultMap">
+        select id, label, permission, parent_id, sort, menu_type, icon, href, created_time, updated_time, status
+        from tenon_menu
+        <trim prefix="where" prefixOverrides="and">
+            <if test="label != null and label != ''">
+                and label = #{label}
+            </if>
+            <if test="parentId != null and parentId != ''">
+                and parent_id = #{parentId}
+            </if>
+        </trim>
     </select>
 </mapper>

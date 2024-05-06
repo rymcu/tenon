@@ -2,6 +2,7 @@ package com.rymcu.tenon.service;
 
 import com.rymcu.tenon.core.service.Service;
 import com.rymcu.tenon.entity.Role;
+import com.rymcu.tenon.model.BindRoleMenuInfo;
 import com.rymcu.tenon.model.RoleSearch;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface RoleService extends Service<Role> {
     Boolean postRole(Role role);
 
     List<Role> findRoles(RoleSearch search);
+
+    Boolean bindRoleMenu(BindRoleMenuInfo bindRoleMenuInfo);
 }

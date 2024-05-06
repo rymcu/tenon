@@ -87,4 +87,8 @@ public class User implements Serializable {
      */
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date lastOnlineTime;
+
+    public Object findUserInfo(Long idUser) {
+        return null;
+    }
 }
