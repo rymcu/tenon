@@ -7,8 +7,8 @@ create table if not exists tenon_menu
     id           bigint auto_increment comment '主键'
         primary key,
     label        varchar(64)                          not null comment '名称',
-    permission   varchar(128)                         not null comment '权限',
-    icon         varchar(128)                         not null comment '图标',
+    permission   varchar(128)                         null comment '权限',
+    icon         varchar(128)                         null comment '图标',
     href         varchar(128)                         not null comment '链接',
     status       decimal(1) default 1                 not null comment '状态',
     created_time datetime   default CURRENT_TIMESTAMP null comment '创建时间',
@@ -97,5 +97,48 @@ create table if not exists tenon_user_role
         unique (id_tenon_user, id_tenon_role)
 )
     comment '用户权限表';
+# 菜单表初始数据
+INSERT INTO tenon.tenon_menu (id, label, permission, icon, href, status, created_time, updated_time, parent_id, menu_type, sort) VALUES (1, 'Home', 'home', 'i-heroicons-home', '/', 1, '2024-05-04 13:22:48', '2024-05-04 05:22:48', 0, 0, 1);
+INSERT INTO tenon.tenon_menu (id, label, permission, icon, href, status, created_time, updated_time, parent_id, menu_type, sort) VALUES (2, 'Inbox', 'inbox', 'i-heroicons-inbox', '/inbox', 1, '2024-05-04 13:22:48', '2024-05-04 05:22:48', 0, 0, 20);
+INSERT INTO tenon.tenon_menu (id, label, permission, icon, href, status, created_time, updated_time, parent_id, menu_type, sort) VALUES (3, 'Users', 'users', 'i-heroicons-user-group', '/users', 1, '2024-05-04 13:22:48', '2024-05-04 05:22:48', 0, 0, 30);
+INSERT INTO tenon.tenon_menu (id, label, permission, icon, href, status, created_time, updated_time, parent_id, menu_type, sort) VALUES (4, 'Roles', 'roles', 'i-heroicons-identification', '/roles', 1, '2024-05-04 13:22:48', '2024-05-04 05:22:48', 0, 0, 40);
+INSERT INTO tenon.tenon_menu (id, label, permission, icon, href, status, created_time, updated_time, parent_id, menu_type, sort) VALUES (5, 'Menus', 'menus', 'i-heroicons-list-bullet', '/menus', 1, '2024-05-04 13:22:48', '2024-05-04 05:22:48', 0, 0, 50);
+INSERT INTO tenon.tenon_menu (id, label, permission, icon, href, status, created_time, updated_time, parent_id, menu_type, sort) VALUES (6, 'Settings', 'settings', 'i-heroicons-cog-8-tooth', '/settings', 1, '2024-05-04 13:22:48', '2024-05-04 05:22:48', 0, 0, 60);
+INSERT INTO tenon.tenon_menu (id, label, permission, icon, href, status, created_time, updated_time, parent_id, menu_type, sort) VALUES (7, 'General', 'general', null, '/settings', 1, '2024-05-04 13:26:45', '2024-05-04 05:26:46', 6, 0, 10);
+INSERT INTO tenon.tenon_menu (id, label, permission, icon, href, status, created_time, updated_time, parent_id, menu_type, sort) VALUES (8, 'Members', 'members', null, '/settings/members', 1, '2024-05-04 13:26:46', '2024-05-04 05:26:46', 6, 0, 20);
+INSERT INTO tenon.tenon_menu (id, label, permission, icon, href, status, created_time, updated_time, parent_id, menu_type, sort) VALUES (9, 'Notifications', 'notifications', null, '/settings/notifications', 1, '2024-05-04 13:26:46', '2024-05-04 05:26:46', 6, 0, 30);
+# 角色表初始数据
+INSERT INTO tenon.tenon_role (id, label, permission, status, created_time, updated_time) VALUES (1, '管理员', 'admin', 1, '2024-04-18 01:46:55', '2024-04-18 01:46:55');
+INSERT INTO tenon.tenon_role (id, label, permission, status, created_time, updated_time) VALUES (2, '普通用户', 'user', 1, '2024-04-18 01:46:55', '2024-04-18 01:46:55');
+INSERT INTO tenon.tenon_role (id, label, permission, status, created_time, updated_time) VALUES (3, '会员用户', 'member', 1, '2024-04-18 01:46:56', '2024-04-18 01:46:56');
+# 角色菜单表初始数据
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (1, 1);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (1, 2);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (1, 3);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (1, 4);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (1, 5);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (1, 6);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (1, 7);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (1, 8);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (1, 9);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (2, 1);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (2, 2);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (2, 6);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (2, 7);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (2, 8);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (2, 9);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (3, 1);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (3, 2);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (3, 6);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (3, 7);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (3, 8);
+INSERT INTO tenon.tenon_role_menu (id_tenon_role, id_tenon_menu) VALUES (3, 9);
+# 用户表初始数据
+INSERT INTO tenon.tenon_user (id, account, password, nickname, avatar, email, phone, status, created_time, last_login_time, real_name, last_online_time) VALUES (1, '1411780001', '7d392ab4ab81547b860c4f87a4854503f6e2148a8376b0f3254e9473', 'ronger', 'https://static.rymcu.com/article/1578475481946.png', 'ronger@rymcu.com', null, 1, '2024-04-18 01:48:08', '2024-05-06 06:50:37', null, '2024-05-06 07:20:16');
+INSERT INTO tenon.tenon_user (id, account, password, nickname, avatar, email, phone, status, created_time, last_login_time, real_name, last_online_time) VALUES (3, '1411780005', '37743e4392741bf0f58351ca6720b4d0f04e41de0674fa1bd6b5dac9', 'atwoet', 'https://static.rymcu.com/article/1578475481946.png', 'atwoet@outlook.com', null, 1, '2024-04-19 03:07:50', null, null, null);
+INSERT INTO tenon.tenon_user (id, account, password, nickname, avatar, email, phone, status, created_time, last_login_time, real_name, last_online_time) VALUES (4, '1411780006', '1cd07ca45a96223119a8fceaad1e5be6065101a4b203e0eea81ee472', 'hugh', 'https://static.rymcu.com/article/1578475481946.png', 'hugh@rymcu.com', null, 1, '2024-04-26 13:35:05', null, null, null);
+# 用户角色表初始数据
+INSERT INTO tenon.tenon_user_role (id_tenon_user, id_tenon_role) VALUES (1, 1);
+INSERT INTO tenon.tenon_user_role (id_tenon_user, id_tenon_role) VALUES (3, 2);
 
 
