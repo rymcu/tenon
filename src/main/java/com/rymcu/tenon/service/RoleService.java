@@ -6,6 +6,7 @@ import com.rymcu.tenon.model.BindRoleMenuInfo;
 import com.rymcu.tenon.model.RoleSearch;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created on 2024/4/13 22:06.
@@ -22,4 +23,6 @@ public interface RoleService extends Service<Role> {
     List<Role> findRoles(RoleSearch search);
 
     Boolean bindRoleMenu(BindRoleMenuInfo bindRoleMenuInfo);
+
+    Set<Long> findRoleMenus(Long idRole);
 }

@@ -35,4 +35,7 @@
             </if>
         </if>
     </select>
+    <select id="selectRoleMenus" resultType="java.lang.Long">
+        select id_tenon_menu from tenon_role_menu where id_tenon_role = #{idRole}
+    </select>
 </mapper>

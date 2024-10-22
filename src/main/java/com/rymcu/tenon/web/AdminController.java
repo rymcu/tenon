@@ -15,6 +15,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created on 2024/4/19 8:44.
@@ -69,6 +70,11 @@ public class AdminController {
     @GetMapping("/role/{idRole}")
     public GlobalResult<Role> role(@PathVariable Long idRole) {
         return GlobalResultGenerator.genSuccessResult(roleService.findById(String.valueOf(idRole)));
+    }
+
+    @GetMapping("/role/{idRole}/menus")
+    public GlobalResult<Set<Long>> roleMenus(@PathVariable Long idRole) {
+        return GlobalResultGenerator.genSuccessResult(roleService.findRoleMenus(idRole));
     }
 
     @PostMapping("/role/post")

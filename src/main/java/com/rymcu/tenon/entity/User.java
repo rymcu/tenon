@@ -1,12 +1,7 @@
 package com.rymcu.tenon.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.apache.ibatis.type.JdbcType;
-import tk.mybatis.mapper.annotation.ColumnType;
-import tk.mybatis.mapper.annotation.KeySql;
-import tk.mybatis.mapper.code.ORDER;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -69,6 +64,10 @@ public class User implements Serializable {
      * 状态
      */
     private Integer status;
+    /**
+     * 删除标记
+     */
+    private Integer delFlag;
 
     /**
      * 最后登录时间

@@ -2,8 +2,6 @@ package com.rymcu.tenon.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
-import tk.mybatis.mapper.annotation.KeySql;
-import tk.mybatis.mapper.code.ORDER;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -51,13 +49,17 @@ public class Menu {
      */
     private Integer status;
     /**
+     * 删除标记
+     */
+    private Integer delFlag;
+    /**
      * 类型
      */
     private Integer menuType;
     /**
      * 排序
      */
-    private Integer sort;
+    private Integer sortNo;
     /**
      * 父级菜单主键
      */

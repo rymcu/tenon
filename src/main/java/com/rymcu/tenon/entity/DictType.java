@@ -1,54 +1,60 @@
 package com.rymcu.tenon.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * Created on 2024/9/22 20:03.
+ *
  * @author ronger
+ * @email ronger-x@outlook.com
+ * @desc : com.rymcu.tenon.entity
  */
+@Table(name = "tenon_dict")
 @Data
-@Table(name = "tenon_role")
-public class Role implements Serializable {
+public class DictType {
+    /**
+     * 主键
+     */
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Long idRole;
-
+    private String id;
     /**
-     * 角色名称
+     * 名称
      */
-    private String label;
-
+    private String typeName;
     /**
-     * 角色权限
+     * 代码
      */
-    private String permission;
-
+    private String typeCode;
+    /**
+     * 排序
+     */
+    private Integer sortNo;
     /**
      * 状态
      */
     private Integer status;
     /**
-     * 删除标记
+     * 创建人
      */
-    private Integer delFlag;
-
+    private Long createdBy;
     /**
      * 创建时间
      */
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
-
+    /**
+     * 更新人
+     */
+    private Long updatedBy;
     /**
      * 更新时间
      */
-    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
 }

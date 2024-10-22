@@ -2,8 +2,6 @@ package com.rymcu.tenon.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
-import tk.mybatis.mapper.annotation.KeySql;
-import tk.mybatis.mapper.code.ORDER;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;

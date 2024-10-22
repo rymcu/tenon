@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created on 2024/4/13 22:06.
@@ -61,5 +62,10 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
             num += roleMapper.insertRoleMenu(bindRoleMenuInfo.getIdRole(), idMenu);
         }
         return num == bindRoleMenuInfo.getIdMenus().size();
+    }
+
+    @Override
+    public Set<Long> findRoleMenus(Long idRole) {
+        return roleMapper.selectRoleMenus(idRole);
     }
 }
