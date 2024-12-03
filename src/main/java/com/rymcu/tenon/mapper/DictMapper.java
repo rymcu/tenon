@@ -14,9 +14,9 @@ import java.util.List;
  * @desc : com.rymcu.tenon.mapper
  */
 public interface DictMapper extends Mapper<Dict> {
-    List<Dict> selectDictList(@Param("q") String q, @Param("dictTypeCode") String dictTypeCode, @Param("status") Integer status);
+    List<Dict> selectDictList(@Param("query") String query, @Param("dictTypeCode") String dictTypeCode, @Param("status") Integer status);
 
     int updateStatus(@Param("idDict") Long idDict, @Param("status") Integer status);
 
-    int updateDelFlag(@Param("idDict") Long idDict);
+    int updateDelFlag(@Param("idDict") Long idDict, @Param("delFlag") Integer delFlag);
 }

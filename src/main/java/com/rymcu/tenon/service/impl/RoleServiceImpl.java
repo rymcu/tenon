@@ -35,7 +35,7 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean postRole(Role role) {
+    public Boolean saveRole(Role role) {
         Role oldRole = roleMapper.selectByPrimaryKey(role.getIdRole());
         if (Objects.nonNull(oldRole)) {
             oldRole.setLabel(role.getLabel());
@@ -65,7 +65,17 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
     }
 
     @Override
+    public Boolean updateStatus(Long idRole, Integer status) {
+        return roleMapper.updateStatusByIdRole(idRole, status) > 0;
+    }
+
+    @Override
     public Set<Long> findRoleMenus(Long idRole) {
         return roleMapper.selectRoleMenus(idRole);
+    }
+
+    @Override
+    public Boolean updateDelFlag(Long idRole, Integer delFlag) {
+        return roleMapper.updateDelFlag(idRole, delFlag) > 0;
     }
 }

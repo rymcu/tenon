@@ -12,6 +12,7 @@ import com.rymcu.tenon.entity.Menu;
 import com.rymcu.tenon.entity.Role;
 import com.rymcu.tenon.entity.User;
 import com.rymcu.tenon.handler.event.RegisterEvent;
+import com.rymcu.tenon.handler.event.ResetPasswordEvent;
 import com.rymcu.tenon.mapper.MenuMapper;
 import com.rymcu.tenon.mapper.RoleMapper;
 import com.rymcu.tenon.mapper.UserMapper;
@@ -82,11 +83,14 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                     user.setEmail(email);
                     user.setPassword(Utils.encryptPassword(password));
                     user.setAvatar(DEFAULT_AVATAR);
-                    userMapper.insertSelective(user);
-                    // 注册成功后执行相关初始化事件
-                    applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getAccount()));
-                    redisTemplate.delete(validateCodeKey);
-                    return true;
+                    int result = userMapper.insertSelective(user);
+                    if (result > 0) {
+                        // 注册成功后执行相关初始化事件
+                        applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getAccount(), ""));
+                        redisTemplate.delete(validateCodeKey);
+                        return true;
+                    }
+                    throw new BusinessException("注册失败！");
                 }
             }
         }
@@ -205,7 +209,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
      */
     @Override
     public List<UserInfo> findUsers(UserSearch search) {
-        List<UserInfo> users = userMapper.selectUsers(search.getAccount(), search.getEmail(), search.getStartDate(), search.getEndDate(), search.getOrder(), search.getSort(), search.getQ());
+        List<UserInfo> users = userMapper.selectUsers(search.getAccount(), search.getEmail(), search.getStartDate(), search.getEndDate(), search.getOrder(), search.getSort(), search.getQuery());
         users.forEach(userInfo -> {
             Avatar avatar = new Avatar();
             avatar.setAlt(userInfo.getNickname());
@@ -236,30 +240,41 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean postUser(UserInfo userInfo) {
-        User user = userMapper.selectByAccount(userInfo.getEmail());
-        if (Objects.nonNull(user)) {
-            // 用户已存在
+    public Boolean saveUser(UserInfo userInfo) {
+        boolean isUpdate = userInfo.getIdUser() != null;
+        User user;
+        if (isUpdate) {
+            user = userMapper.selectByPrimaryKey(userInfo.getIdUser());
+            if (Objects.nonNull(user)) {
+                // 用户已存在
+                user.setEmail(userInfo.getEmail());
+                user.setPhone(userInfo.getPhone());
+                user.setNickname(checkNickname(userInfo.getNickname()));
+                user.setStatus(userInfo.getStatus());
+                user.setAvatar(userInfo.getAvatar().getSrc());
+                return userMapper.updateByPrimaryKeySelective(user) > 0;
+            }
+            throw new BusinessException("用户不存在");
+        } else {
+            user = new User();
             user.setEmail(userInfo.getEmail());
+            user.setPhone(userInfo.getPhone());
             user.setNickname(checkNickname(userInfo.getNickname()));
-            user.setStatus(userInfo.getStatus());
-            user.setAvatar(userInfo.getAvatar().getSrc());
-            return userMapper.updateByPrimaryKeySelective(user) > 0;
+            String code = userInfo.getPassword();
+            if (StringUtils.isBlank(code)) {
+                code = String.valueOf(Utils.genCode());
+            }
+            user.setPassword(Utils.encryptPassword(code));
+            user.setAvatar(DEFAULT_AVATAR);
+            user.setAccount(nextAccount());
+            user.setCreatedTime(new Date());
+            boolean result = userMapper.insertSelective(user) > 0;
+            if (result) {
+                // 注册成功后执行相关初始化事件
+                applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getEmail(), code));
+            }
+            return result;
         }
-        user = new User();
-        user.setEmail(userInfo.getEmail());
-        user.setNickname(checkNickname(userInfo.getNickname()));
-        String code = String.valueOf(Utils.genCode());
-        user.setPassword(Utils.encryptPassword(code));
-        user.setAvatar(DEFAULT_AVATAR);
-        user.setAccount(nextAccount());
-        user.setCreatedTime(new Date());
-        boolean result = userMapper.insertSelective(user) > 0;
-        if (result) {
-            // 注册成功后执行相关初始化事件
-            applicationEventPublisher.publishEvent(new RegisterEvent(user.getIdUser(), user.getAccount()));
-        }
-        return result;
     }
 
     @Override
@@ -268,6 +283,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         user.setNickname(checkNickname(userInfo.getNickname()));
         user.setAvatar(userInfo.getAvatar().getSrc());
         user.setEmail(userInfo.getEmail());
+        user.setPhone(userInfo.getPhone());
         return userMapper.updateByPrimaryKeySelective(user) > 0;
     }
 
@@ -280,5 +296,31 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             num += userMapper.insertUserRole(bindUserRoleInfo.getIdUser(), idRole);
         }
         return num == bindUserRoleInfo.getIdRoles().size();
+    }
+
+    @Override
+    public Boolean updateStatus(Long idUser, Integer status) {
+        return userMapper.updateStatus(idUser, status) > 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String resetPassword(Long idUser) {
+        User user = userMapper.selectByPrimaryKey(idUser);
+        if (Objects.nonNull(user)) {
+            String code = String.valueOf(Utils.genCode());
+            String password = Utils.encryptPassword(code);
+            int result = userMapper.updatePasswordById(idUser, password);
+            if (result > 0) {
+                applicationEventPublisher.publishEvent(new ResetPasswordEvent(user.getEmail(), code));
+            }
+            return code;
+        }
+        throw new BusinessException("用户不存在");
+    }
+
+    @Override
+    public Boolean updateDelFlag(Long idUser, Integer delFlag) {
+        return userMapper.updateDelFlag(idUser, delFlag) > 0;
     }
 }

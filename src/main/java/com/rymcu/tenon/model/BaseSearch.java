@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 public class BaseSearch {
 
-    private String q;
+    private String query;
 
     private String sort;
 
@@ -27,5 +27,7 @@ public class BaseSearch {
     private String startDate;
 
     private String endDate;
+
+    private Integer status;
 
 }

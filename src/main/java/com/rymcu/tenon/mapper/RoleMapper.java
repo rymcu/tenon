@@ -23,5 +23,9 @@ public interface RoleMapper extends Mapper<Role> {
 
     int insertRoleMenu(@Param("idRole") Long idRole, @Param("idMenu") Long idMenu);
 
+    int updateStatusByIdRole(@Param("idRole") Long idRole, @Param("status") Integer status);
+
     Set<Long> selectRoleMenus(@Param("idRole") Long idRole);
+
+    int updateDelFlag(@Param("idRole") Long idRole, @Param("delFlag") Integer delFlag);
 }

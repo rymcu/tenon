@@ -27,11 +27,17 @@ public interface UserMapper extends Mapper<User> {
 
     String selectMaxAccount();
 
-    List<UserInfo> selectUsers(@Param("account") String account, @Param("email") String email, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("order") String order, @Param("sort") String sort, String query);
+    List<UserInfo> selectUsers(@Param("account") String account, @Param("email") String email, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("order") String order, @Param("sort") String sort, @Param("query") String query);
 
     int updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
 
     UserInfo selectUserInfoById(@Param("idUser") Long idUser);
 
     int deleteUserRole(@Param("idUser") Long idUser);
+
+    int updateStatus(@Param("idUser") Long idUser, @Param("status") Integer status);
+
+    int updatePasswordById(@Param("idUser") Long idUser, @Param("password") String password);
+
+    int updateDelFlag(@Param("idUser") Long idUser, @Param("delFlag") Integer delFlag);
 }

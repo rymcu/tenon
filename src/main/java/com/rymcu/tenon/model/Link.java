@@ -34,11 +34,11 @@ public class Link {
     /**
      * 状态
      */
-    private String status;
+    private Integer status;
     /**
      * 排序
      */
-    private Integer sort;
+    private Integer sortNo;
     /**
      * 父级菜单主键
      */

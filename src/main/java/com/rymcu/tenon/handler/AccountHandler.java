@@ -4,8 +4,9 @@ import com.rymcu.tenon.handler.event.AccountEvent;
 import com.rymcu.tenon.mapper.UserMapper;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
  * Created on 2022/8/24 14:44.
@@ -21,7 +22,8 @@ public class AccountHandler {
     @Resource
     private UserMapper userMapper;
 
-    @TransactionalEventListener
+    @Async
+    @EventListener
     public void processAccountLastOnlineTimeEvent(AccountEvent accountEvent) {
         userMapper.updateLastOnlineTimeByAccount(accountEvent.getAccount());
     }

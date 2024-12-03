@@ -12,6 +12,12 @@
     <insert id="insertRoleMenu">
         insert into tenon_role_menu (id_tenon_role, id_tenon_menu) values (#{idRole}, #{idMenu})
     </insert>
+    <update id="updateStatusByIdRole">
+        update tenon_role set status = #{status} where id = #{idRole}
+    </update>
+    <update id="updateDelFlag">
+        update tenon_role set del_flag = #{delFlag} where id = #{idRole}
+    </update>
     <select id="selectRolesByIdUser" resultMap="BaseResultMap">
         select tr.id, tr.label, tr.permission
         from tenon_user_role tur
@@ -36,6 +42,8 @@
         </if>
     </select>
     <select id="selectRoleMenus" resultType="java.lang.Long">
-        select id_tenon_menu from tenon_role_menu where id_tenon_role = #{idRole}
+        select id_tenon_menu
+        from tenon_role_menu
+        where id_tenon_role = #{idRole}
     </select>
 </mapper>

@@ -1,19 +1,16 @@
 package com.rymcu.tenon.service.impl;
 
 import com.rymcu.tenon.core.constant.ProjectConstant;
-import com.rymcu.tenon.core.service.redis.RedisService;
 import com.rymcu.tenon.service.JavaMailService;
-import com.rymcu.tenon.service.UserService;
 import com.rymcu.tenon.util.Utils;
 import jakarta.annotation.Resource;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.time.StopWatch;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -45,8 +42,6 @@ public class JavaMailServiceImpl implements JavaMailService {
     private JavaMailSenderImpl mailSender;
     @Autowired
     private StringRedisTemplate redisTemplate;
-    @Resource
-    private UserService userService;
     /**
      * thymeleaf模板引擎
      */
@@ -66,29 +61,41 @@ public class JavaMailServiceImpl implements JavaMailService {
 
     @Override
     public Integer sendEmailCode(String email) throws MessagingException {
-        return sendCode(email, 0);
+        return sendCode(email, 0, String.valueOf(Utils.genCode()));
     }
 
     @Override
     public Integer sendForgetPasswordEmail(String email) throws MessagingException {
-        return sendCode(email, 1);
+        String code = Utils.encryptPassword(email);
+        return sendCode(email, 1, code);
     }
 
-    private Integer sendCode(String to, Integer type) throws MessagingException {
+    /**
+     * 发送用户初始密码邮件
+     *
+     * @param email 收件人邮箱
+     * @param code
+     * @return 执行结果 0：失败1：成功
+     * @throws MessagingException
+     */
+    @Override
+    public Integer sendInitialPassword(String email, String code) throws MessagingException {
+        return sendCode(email, 2, code);
+    }
+
+    private Integer sendCode(String to, Integer type, String code) throws MessagingException {
         Properties props = getProps();
         mailSender.setJavaMailProperties(props);
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setFrom(USERNAME);
         simpleMailMessage.setTo(to);
         if (type == 0) {
-            Integer code = Utils.genCode();
-            redisTemplate.boundValueOps(ProjectConstant.REDIS_REGISTER + to).set(String.valueOf(code), 5, TimeUnit.MINUTES);
+            redisTemplate.boundValueOps(ProjectConstant.REDIS_REGISTER + to).set(code, 5, TimeUnit.MINUTES);
             simpleMailMessage.setSubject("新用户注册邮箱验证");
             simpleMailMessage.setText("【RYMCU】您的校验码是 " + code + ",有效时间 5 分钟，请不要泄露验证码给其他人。如非本人操作,请忽略！");
             mailSender.send(simpleMailMessage);
             return 1;
         } else if (type == 1) {
-            String code = Utils.encryptPassword(to);
             String url = BASE_URL + "/forget-password?code=" + code;
             redisTemplate.boundValueOps(code).set(ProjectConstant.REDIS_FORGET_PASSWORD + to, 5, TimeUnit.MINUTES);
 
@@ -102,6 +109,11 @@ public class JavaMailServiceImpl implements JavaMailService {
                     "【RYMCU】 找回密码",
                     thymeleafTemplatePath,
                     thymeleafTemplateVariable);
+            return 1;
+        } else if (type == 2) {
+            simpleMailMessage.setSubject("新用户初始密码");
+            simpleMailMessage.setText("【RYMCU】感谢您选择 RYMCU, 您的初始密码是 " + code + ", 请及时修改初始密码。");
+            mailSender.send(simpleMailMessage);
             return 1;
         }
         return 0;

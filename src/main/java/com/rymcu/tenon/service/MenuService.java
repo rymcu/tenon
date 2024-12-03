@@ -21,7 +21,11 @@ public interface MenuService extends Service<Menu> {
 
     List<Link> findMenus(MenuSearch search);
 
-    Boolean postMenu(Menu menu);
+    Boolean saveMenu(Menu menu);
 
     List<Link> findChildrenMenus(MenuSearch search);
+
+    Boolean updateStatus(Long idMenu, Integer status);
+
+    Boolean updateDelFlag(Long idMenu, Integer delFlag);
 }

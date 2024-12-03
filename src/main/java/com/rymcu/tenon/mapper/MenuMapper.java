@@ -23,4 +23,8 @@ public interface MenuMapper extends Mapper<Menu> {
     List<Menu> selectMenuListByParentId(@Param("parentId") Long parentId);
 
     List<Menu> selectMenuListByLabelAndParentId(@Param("label") String label, @Param("parentId") Long parentId);
+
+    int updateStatusByIdMenu(@Param("idMenu") Long idMenu, @Param("status") Integer status);
+
+    int updateDelFlag(@Param("idMenu") Long idMenu, @Param("delFlag") Integer delFlag);
 }

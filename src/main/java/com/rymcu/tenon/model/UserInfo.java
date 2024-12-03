@@ -29,6 +29,10 @@ public class UserInfo {
 
     private String email;
 
+    private String password;
+
+    private String phone;
+
     @JSONField(format = "yyyy-MM-dd HH:mm")
     private Date lastLoginTime;
 
@@ -40,4 +44,5 @@ public class UserInfo {
 
     private Integer onlineStatus;
 
+    private String roleNames;
 }

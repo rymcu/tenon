@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * Created on 2024/4/18 8:09.
+ * Created on 2024/7/17 20:07.
  *
  * @author ronger
  * @email ronger-x@outlook.com
@@ -12,12 +12,9 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class RegisterEvent {
+public class ResetPasswordEvent {
 
-    private Long idUser;
-
-    private String account;
+    private String email;
 
     private String code;
-
 }

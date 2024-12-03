@@ -18,11 +18,15 @@ import java.util.Set;
 public interface RoleService extends Service<Role> {
     List<Role> findRolesByIdUser(Long idUser);
 
-    Boolean postRole(Role role);
+    Boolean saveRole(Role role);
 
     List<Role> findRoles(RoleSearch search);
 
     Boolean bindRoleMenu(BindRoleMenuInfo bindRoleMenuInfo);
 
+    Boolean updateStatus(Long idRole, Integer status);
+
     Set<Long> findRoleMenus(Long idRole);
+
+    Boolean updateDelFlag(Long idRole, Integer delFlag);
 }

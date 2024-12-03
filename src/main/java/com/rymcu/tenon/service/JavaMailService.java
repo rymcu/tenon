@@ -28,4 +28,13 @@ public interface JavaMailService {
      * @throws MessagingException
      */
     Integer sendForgetPasswordEmail(String email) throws MessagingException;
+
+    /**
+     * 发送用户初始密码邮件
+     *
+     * @param email 收件人邮箱
+     * @return 执行结果 0：失败1：成功
+     * @throws MessagingException
+     */
+    Integer sendInitialPassword(String email, String code) throws MessagingException;
 }

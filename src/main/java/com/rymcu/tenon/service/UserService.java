@@ -1,9 +1,9 @@
 package com.rymcu.tenon.service;
 
 import com.rymcu.tenon.core.service.Service;
+import com.rymcu.tenon.entity.User;
 import com.rymcu.tenon.model.BindUserRoleInfo;
 import com.rymcu.tenon.model.TokenUser;
-import com.rymcu.tenon.entity.User;
 import com.rymcu.tenon.model.UserInfo;
 import com.rymcu.tenon.model.UserSearch;
 
@@ -89,9 +89,15 @@ public interface UserService extends Service<User> {
 
     UserInfo findUserInfoById(Long idUser);
 
-    Boolean postUser(UserInfo userInfo);
+    Boolean saveUser(UserInfo userInfo);
 
     Boolean updateUserInfo(UserInfo userInfo);
 
     Boolean bindUserRole(BindUserRoleInfo bindUserRoleInfo);
+
+    Boolean updateStatus(Long idUser, Integer status);
+
+    String resetPassword(Long idUser);
+
+    Boolean updateDelFlag(Long idUser, Integer delFlag);
 }

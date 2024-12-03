@@ -40,7 +40,7 @@ public class MenuServiceImpl extends AbstractService<Menu> implements MenuServic
 
     @Override
     public List<Link> findMenus(MenuSearch search) {
-        List<Menu> menus = menuMapper.selectMenuListByLabelAndParentId(search.getLabel(), search.getParentId());
+        List<Menu> menus = menuMapper.selectMenuListByLabelAndParentId(search.getQuery(), search.getParentId());
         List<Link> links = new ArrayList<>();
         for (Menu menu : menus) {
             Link link = new Link();
@@ -48,6 +48,8 @@ public class MenuServiceImpl extends AbstractService<Menu> implements MenuServic
             link.setLabel(menu.getLabel());
             link.setParentId(menu.getParentId());
             link.setIcon(menu.getIcon());
+            link.setSortNo(menu.getSortNo());
+            link.setStatus(menu.getStatus());
             MenuSearch menuSearch = new MenuSearch();
             menuSearch.setParentId(menu.getIdMenu());
             link.setChildren(findMenus(menuSearch));
@@ -58,7 +60,7 @@ public class MenuServiceImpl extends AbstractService<Menu> implements MenuServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean postMenu(Menu menu) {
+    public Boolean saveMenu(Menu menu) {
         Menu oldMenu = menuMapper.selectByPrimaryKey(menu.getIdMenu());
         if (Objects.nonNull(oldMenu)) {
             oldMenu.setLabel(menu.getLabel());
@@ -67,7 +69,7 @@ public class MenuServiceImpl extends AbstractService<Menu> implements MenuServic
             oldMenu.setHref(menu.getHref());
             oldMenu.setStatus(menu.getStatus());
             oldMenu.setMenuType(menu.getMenuType());
-            oldMenu.setSort(menu.getSort());
+            oldMenu.setSortNo(menu.getSortNo());
             oldMenu.setParentId(menu.getParentId());
             oldMenu.setUpdatedTime(menu.getUpdatedTime());
             return menuMapper.updateByPrimaryKeySelective(oldMenu) > 0;
@@ -78,34 +80,44 @@ public class MenuServiceImpl extends AbstractService<Menu> implements MenuServic
 
     @Override
     public List<Link> findChildrenMenus(MenuSearch search) {
-        List<Menu> menus = menuMapper.selectMenuListByLabelAndParentId(search.getLabel(), search.getParentId());
+        List<Menu> menus = menuMapper.selectMenuListByLabelAndParentId(search.getQuery(), search.getParentId());
         List<Link> links = new ArrayList<>();
         for (Menu menu : menus) {
-            Link link = new Link();
-            link.setId(menu.getIdMenu());
-            link.setLabel(menu.getLabel());
-            link.setParentId(menu.getParentId());
-            link.setTo(menu.getHref());
-            link.setIcon(menu.getIcon());
-            link.setStatus(String.valueOf(menu.getStatus()));
-            links.add(link);
+            links.add(convertLink(menu));
         }
         return links;
+    }
+
+    @Override
+    public Boolean updateStatus(Long idMenu, Integer status) {
+        return menuMapper.updateStatusByIdMenu(idMenu, status) > 0;
+    }
+
+    @Override
+    public Boolean updateDelFlag(Long idMenu, Integer delFlag) {
+        return menuMapper.updateDelFlag(idMenu, delFlag) > 0;
     }
 
     private List<Link> findLinkTreeMode(Long idUser, long parentId) {
         List<Menu> menus = menuMapper.selectMenuListByIdUserAndParentId(idUser, parentId);
         List<Link> links = new ArrayList<>();
         for (Menu menu : menus) {
-            Link link = new Link();
-            link.setId(menu.getIdMenu());
-            link.setLabel(menu.getLabel());
-            link.setParentId(menu.getParentId());
-            link.setTo(menu.getHref());
-            link.setIcon(menu.getIcon());
+            Link link = convertLink(menu);
             link.setChildren(findLinkTreeMode(idUser, menu.getIdMenu()));
             links.add(link);
         }
         return links;
+    }
+
+    private static Link convertLink(Menu menu) {
+        Link link = new Link();
+        link.setId(menu.getIdMenu());
+        link.setLabel(menu.getLabel());
+        link.setParentId(menu.getParentId());
+        link.setTo(menu.getHref());
+        link.setIcon(menu.getIcon());
+        link.setSortNo(menu.getSortNo());
+        link.setStatus(menu.getStatus());
+        return link;
     }
 }

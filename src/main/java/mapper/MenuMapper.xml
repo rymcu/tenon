@@ -9,15 +9,21 @@
         <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
         <result column="status" jdbcType="NUMERIC" property="status"/>
         <result property="parentId" column="PARENT_ID" jdbcType="NUMERIC"/>
-        <result property="sort" column="SORT" jdbcType="NUMERIC"/>
+        <result property="sortNo" column="SORT_NO" jdbcType="NUMERIC"/>
         <result property="menuType" column="MENU_TYPE" jdbcType="NUMERIC"/>
         <result property="icon" column="ICON" jdbcType="VARCHAR"/>
         <result property="href" column="HREF" jdbcType="VARCHAR"/>
     </resultMap>
+    <update id="updateStatusByIdMenu">
+        update tenon_menu set status = #{status} where id = #{idMenu}
+    </update>
+    <update id="updateDelFlag">
+        update tenon_menu set del_flag = #{delFlag} where id = #{idMenu}
+    </update>
     <select id="selectMenuListByIdRole" resultMap="BaseResultMap">
         select id, label, permission
         from tenon_menu tm
-        where status = 1
+        where del_flag = 1
           and exists(select 1
                      from tenon_role_menu trm
                      where trm.id_tenon_menu = tm.id
@@ -26,7 +32,7 @@
     <select id="selectMenuListByIdUser" resultMap="BaseResultMap">
         select id, label, permission
         from tenon_menu tm
-        where status = 1
+        where del_flag = 1
           and exists(select 1
                      from tenon_role_menu trm
                      where trm.id_tenon_menu = tm.id
@@ -36,9 +42,9 @@
                                     and tur.id_tenon_user = #{idUser}))
     </select>
     <select id="selectMenuListByIdUserAndParentId" resultMap="BaseResultMap">
-        select id, label, permission, parent_id, sort, menu_type, icon, href
+        select id, label, permission, parent_id, sort_no, menu_type, icon, href
         from tenon_menu tm
-        where status = 1 and menu_type = 0 and parent_id = #{parentId}
+        where del_flag = 1 and menu_type = 0 and parent_id = #{parentId}
           and exists(select 1
                      from tenon_role_menu trm
                      where trm.id_tenon_menu = tm.id
@@ -48,7 +54,7 @@
                                     and tur.id_tenon_user = #{idUser}))
     </select>
     <select id="selectMenuListByParentId" resultMap="BaseResultMap">
-        select id, label, permission, parent_id, sort, menu_type, icon, href, created_time, updated_time, status
+        select id, label, permission, parent_id, sort_no, menu_type, icon, href, created_time, updated_time, status
         from tenon_menu
         <trim prefix="where" prefixOverrides="and">
             <choose>
@@ -62,7 +68,7 @@
         </trim>
     </select>
     <select id="selectMenuListByLabelAndParentId" resultMap="BaseResultMap">
-        select id, label, permission, parent_id, sort, menu_type, icon, href, created_time, updated_time, status
+        select id, label, permission, parent_id, sort_no, menu_type, icon, href, created_time, updated_time, status
         from tenon_menu
         <trim prefix="where" prefixOverrides="and">
             <if test="label != null and label != ''">
