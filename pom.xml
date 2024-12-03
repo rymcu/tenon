@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
+        <version>3.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -17,7 +17,7 @@
     <description>tenon</description>
     <properties>
         <java.version>21</java.version>
-        <shiro.version>2.0.0</shiro.version>
+        <shiro.version>2.0.2</shiro.version>
         <jjwt.version>0.12.5</jjwt.version>
         <mockito.version>5.11.0</mockito.version>
     </properties>
