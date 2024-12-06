@@ -160,8 +160,8 @@ public class OpenAiService {
 
     public File uploadFile(String purpose, String filepath) {
         java.io.File file = new java.io.File(filepath);
-        RequestBody purposeBody = RequestBody.create(purpose, okhttp3.MultipartBody.FORM);
-        RequestBody fileBody = RequestBody.create(file, MediaType.parse("text"));
+        RequestBody purposeBody = RequestBody.create(okhttp3.MultipartBody.FORM, purpose);
+        RequestBody fileBody = RequestBody.create(MediaType.parse("text"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", filepath, fileBody);
 
         return execute(api.uploadFile(purposeBody, body));
@@ -217,7 +217,7 @@ public class OpenAiService {
     }
 
     public ImageResult createImageEdit(CreateImageEditRequest request, java.io.File image, java.io.File mask) {
-        RequestBody imageBody = RequestBody.create(image, MediaType.parse("image"));
+        RequestBody imageBody = RequestBody.create(MediaType.parse("image"), image);
 
         MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MediaType.get("multipart/form-data"))
@@ -244,7 +244,7 @@ public class OpenAiService {
     }
 
     public ImageResult createImageVariation(CreateImageVariationRequest request, java.io.File image) {
-        RequestBody imageBody = RequestBody.create(image, MediaType.parse("image"));
+        RequestBody imageBody = RequestBody.create(MediaType.parse("image"), image);
 
         MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MediaType.get("multipart/form-data"))
@@ -265,7 +265,7 @@ public class OpenAiService {
     }
 
     public TranscriptionResult createTranscription(CreateTranscriptionRequest request, java.io.File audio) {
-        RequestBody audioBody = RequestBody.create(audio, MediaType.parse("audio"));
+        RequestBody audioBody = RequestBody.create(MediaType.parse("audio"), audio);
 
         MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MediaType.get("multipart/form-data"))
@@ -294,7 +294,7 @@ public class OpenAiService {
     }
 
     public TranslationResult createTranslation(CreateTranslationRequest request, java.io.File audio) {
-        RequestBody audioBody = RequestBody.create(audio, MediaType.parse("audio"));
+        RequestBody audioBody = RequestBody.create(MediaType.parse("audio"), audio);
 
         MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MediaType.get("multipart/form-data"))
